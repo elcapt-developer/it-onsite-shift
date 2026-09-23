@@ -27,7 +27,10 @@
       { id: 'joseph', name: 'Joseph', campus: 'HIO' }
     ],
     timeSlots: window.TIME_SLOTS || [],
-    schedules: {}
+    schedules: {},
+    hasUnsavedChanges: false,
+    lastSavedSnapshot: '',
+    lastSavedTimestamp: 0
   };
 
   // --- DOM Elements ---
@@ -56,6 +59,8 @@
     btnCancelSupervisorModal: document.getElementById('btnCancelSupervisorModal'),
     btnCloseSupervisorModal: document.getElementById('btnCloseSupervisorModal'),
     btnExportCSV: document.getElementById('btnExportCSV'),
+    btnSaveChanges: document.getElementById('btnSaveChanges'),
+    btnDiscardChanges: document.getElementById('btnDiscardChanges'),
     csvExportModal: document.getElementById('csvExportModal'),
     btnCloseCsvModal: document.getElementById('btnCloseCsvModal'),
     btnCancelCsvModal: document.getElementById('btnCancelCsvModal'),
@@ -75,6 +80,7 @@
     syncDateState();
     setupEventListeners();
     render();
+    updateSaveButtons();
   }
 
   // --- Date & ISO Week Calculation Helpers ---
@@ -196,7 +202,15 @@
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        state.schedules = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.schedules && typeof parsed.updated_at === 'number') {
+          state.schedules = parsed.schedules;
+          state.lastSavedTimestamp = parsed.updated_at;
+        } else {
+          state.schedules = parsed || {};
+          state.lastSavedTimestamp = Date.now();
+        }
+
         Object.values(state.schedules).forEach(weekObj => {
           if (weekObj && Array.isArray(weekObj.days)) {
             weekObj.days.forEach(day => {
@@ -206,6 +220,9 @@
             });
           }
         });
+
+        state.lastSavedSnapshot = JSON.stringify(state.schedules);
+        state.hasUnsavedChanges = false;
         return;
       }
 
@@ -300,10 +317,117 @@
 
   function saveSchedules() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.schedules));
+      state.lastSavedTimestamp = Date.now();
+      const envelope = {
+        schedules: state.schedules,
+        updated_at: state.lastSavedTimestamp
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+      state.lastSavedSnapshot = JSON.stringify(state.schedules);
+      state.hasUnsavedChanges = false;
+      updateSaveButtons();
     } catch (e) {
       console.error('Failed to save to localStorage', e);
+      showToast('Error saving data to local storage.');
     }
+  }
+
+  // --- Change Tracking & Persistence Controls ---
+  function markDirty() {
+    state.hasUnsavedChanges = true;
+    updateSaveButtons();
+  }
+
+  function updateSaveButtons() {
+    if (!elements.btnSaveChanges) return;
+
+    if (state.hasUnsavedChanges) {
+      elements.btnSaveChanges.disabled = false;
+      elements.btnSaveChanges.classList.add('has-changes');
+      elements.btnSaveChanges.classList.remove('is-saved');
+      elements.btnSaveChanges.textContent = '💾 Save Changes';
+      elements.btnSaveChanges.title = 'Click to save pending changes';
+
+      if (elements.btnDiscardChanges) {
+        elements.btnDiscardChanges.style.display = 'inline-flex';
+      }
+    } else {
+      elements.btnSaveChanges.disabled = true;
+      elements.btnSaveChanges.classList.remove('has-changes');
+      if (!elements.btnSaveChanges.classList.contains('is-saved')) {
+        elements.btnSaveChanges.textContent = '💾 Save Changes';
+        elements.btnSaveChanges.title = 'No unsaved changes';
+      }
+      if (elements.btnDiscardChanges) {
+        elements.btnDiscardChanges.style.display = 'none';
+      }
+    }
+  }
+
+  function handleSaveChanges() {
+    if (!state.hasUnsavedChanges) return;
+
+    // Detect data conflicts if newer changes exist in localStorage
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed.updated_at === 'number' && state.lastSavedTimestamp > 0) {
+          if (parsed.updated_at > state.lastSavedTimestamp) {
+            const proceed = confirm(
+              '⚠️ Conflict Warning:\n\n' +
+              'Newer shift data was detected in storage (possibly modified from another session or tab).\n\n' +
+              'Saving now will overwrite those external changes.\n\n' +
+              'Click OK to overwrite and save your current changes, or Cancel to review.'
+            );
+            if (!proceed) {
+              return;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Conflict check error', e);
+    }
+
+    saveSchedules();
+
+    if (elements.btnSaveChanges) {
+      elements.btnSaveChanges.classList.remove('has-changes');
+      elements.btnSaveChanges.classList.add('is-saved');
+      elements.btnSaveChanges.textContent = '✓ Saved!';
+      setTimeout(() => {
+        if (elements.btnSaveChanges) {
+          elements.btnSaveChanges.classList.remove('is-saved');
+          updateSaveButtons();
+        }
+      }, 1800);
+    }
+
+    showToast('All changes have been successfully saved.');
+  }
+
+  function handleDiscardChanges() {
+    if (!state.hasUnsavedChanges) return;
+
+    const confirmDiscard = confirm(
+      'Are you sure you want to discard all unsaved changes?\n\n' +
+      'All uncommitted edits made in this session will be reverted to the last saved state.'
+    );
+    if (!confirmDiscard) return;
+
+    if (state.lastSavedSnapshot) {
+      try {
+        state.schedules = JSON.parse(state.lastSavedSnapshot);
+      } catch (e) {
+        console.error('Failed to parse last saved snapshot', e);
+      }
+    }
+
+    state.hasUnsavedChanges = false;
+    updateSaveButtons();
+    render();
+    showToast('Unsaved changes discarded.');
   }
 
   function getCurrentWeekKey() {
@@ -333,7 +457,6 @@
         period: getPeriodString(year, weekNum),
         days: days
       };
-      saveSchedules();
     }
     return state.schedules[key];
   }
@@ -524,7 +647,7 @@
             const shift = dObj.shifts[empIdx];
             const cur = getApprovalDetails(shift.approval);
             shift.approval = cur.next;
-            saveSchedules();
+            markDirty();
             showToast(`${state.employees[empIdx].name}: Status changed to [${cur.next}]`);
           }
         }
@@ -582,7 +705,7 @@
             }
           });
         });
-        saveSchedules();
+        markDirty();
         render();
         showToast('All shifts for this week have been reset to Pending.');
       }
@@ -598,7 +721,7 @@
       });
     });
 
-    saveSchedules();
+    markDirty();
     render();
     showToast(`🎉 All shifts for this week (${totalCount} total) have been Approved.`);
   }
@@ -804,6 +927,35 @@
         if (elements.csvModalErrorMsg) elements.csvModalErrorMsg.textContent = '';
       });
     }
+
+    // Save & Discard Controls
+    if (elements.btnSaveChanges) {
+      elements.btnSaveChanges.addEventListener('click', handleSaveChanges);
+    }
+    if (elements.btnDiscardChanges) {
+      elements.btnDiscardChanges.addEventListener('click', handleDiscardChanges);
+    }
+
+    // Warn before closing tab if unsaved changes exist
+    window.addEventListener('beforeunload', (e) => {
+      if (state.hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    // Cross-tab synchronization & conflict warning
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY) {
+        if (!state.hasUnsavedChanges) {
+          loadSchedules();
+          render();
+          showToast('Schedule data updated from another tab.');
+        } else {
+          showToast('Notice: Schedules updated in another tab. Save or discard your changes.');
+        }
+      }
+    });
   }
 
   function navigateDate(delta) {
@@ -841,6 +993,7 @@
 
     updateSupervisorButton();
     updateApproveWeekButtons();
+    updateSaveButtons();
     updateNavigatorBar();
     toggleViewContainers();
 
@@ -1340,7 +1493,7 @@
         if (dObj && dObj.shifts[empIdx]) {
           dObj.shifts[empIdx].dayoff = e.target.checked;
           if (e.target.checked) dObj.shifts[empIdx].approval = 'Pending';
-          saveSchedules();
+          markDirty();
           render();
         }
       });
@@ -1374,7 +1527,7 @@
           shift.endSlot = slotIdx;
         }
 
-        saveSchedules();
+        markDirty();
         render();
       });
     });
@@ -1396,7 +1549,7 @@
           const shift = dObj.shifts[empIdx];
           const cur = getApprovalDetails(shift.approval);
           shift.approval = cur.next;
-          saveSchedules();
+          markDirty();
           render();
           showToast(`${state.employees[empIdx].name}: Status changed to [${cur.next}]`);
         }
@@ -1405,6 +1558,17 @@
 
     // 4. Notes Input
     container.querySelectorAll('.notes-input').forEach(input => {
+      input.addEventListener('input', (e) => {
+        const day = e.target.dataset.day;
+        const empIdx = parseInt(e.target.dataset.empidx, 10);
+        const weekData = getOrCreateCurrentWeekData();
+        const dObj = weekData.days.find(d => d.day === day);
+        if (dObj && dObj.shifts[empIdx]) {
+          dObj.shifts[empIdx].notes = e.target.value;
+          markDirty();
+        }
+      });
+
       input.addEventListener('change', (e) => {
         const day = e.target.dataset.day;
         const empIdx = parseInt(e.target.dataset.empidx, 10);
@@ -1412,7 +1576,7 @@
         const dObj = weekData.days.find(d => d.day === day);
         if (dObj && dObj.shifts[empIdx]) {
           dObj.shifts[empIdx].notes = e.target.value.trim();
-          saveSchedules();
+          markDirty();
         }
       });
     });
