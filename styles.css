@@ -191,16 +191,6 @@ body {
   transition: all 0.2s ease;
 }
 
-.supervisor-group-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #64748b;
-  padding: 0 4px;
-  user-select: none;
-}
-
 .supervisor-group .btn {
   height: 28px;
   padding: 0 9px;
@@ -248,10 +238,6 @@ body {
   background: #eff6ff;
   border-color: #93c5fd;
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
-}
-
-.supervisor-group.is-unlocked .supervisor-group-label {
-  color: #1d4ed8;
 }
 
 /* Save & Discard Action Buttons */

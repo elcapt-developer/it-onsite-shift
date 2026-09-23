@@ -140,14 +140,23 @@
 
   function getTodayDate() {
     const now = new Date();
-    if (now.getFullYear() === 2026) {
-      return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-    }
-    return new Date(Date.UTC(2026, 8, 22));
+    return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
   }
 
   function getTodayIso() {
     return formatDateIso(getTodayDate());
+  }
+
+  function getThisWeekMondayAndFridayFromToday() {
+    const today = getTodayDate();
+    const day = today.getUTCDay();
+    const diffToMonday = (day === 0 ? -6 : 1) - day;
+    const monday = new Date(today.getTime() + diffToMonday * 86400000);
+    const friday = new Date(monday.getTime() + 4 * 86400000);
+    return {
+      monday: formatDateIso(monday),
+      friday: formatDateIso(friday)
+    };
   }
 
   function sortShiftsByEmployeeOrder(shifts) {
@@ -1032,18 +1041,18 @@
     // CSV Presets
     if (elements.btnPresetThisWeek) {
       elements.btnPresetThisWeek.addEventListener('click', () => {
-        const mon = getMondayOfIsoWeek(state.year, state.weekNum);
-        const fri = new Date(mon.getTime() + 4 * 86400000);
-        if (elements.csvStartDate) elements.csvStartDate.value = formatDateIso(mon);
-        if (elements.csvEndDate) elements.csvEndDate.value = formatDateIso(fri);
+        const range = getThisWeekMondayAndFridayFromToday();
+        if (elements.csvStartDate) elements.csvStartDate.value = range.monday;
+        if (elements.csvEndDate) elements.csvEndDate.value = range.friday;
         if (elements.csvModalErrorMsg) elements.csvModalErrorMsg.textContent = '';
       });
     }
 
     if (elements.btnPresetThisMonth) {
       elements.btnPresetThisMonth.addEventListener('click', () => {
-        const y = state.selectedDate.getUTCFullYear();
-        const m = state.selectedDate.getUTCMonth();
+        const today = getTodayDate();
+        const y = today.getUTCFullYear();
+        const m = today.getUTCMonth();
         const firstDay = new Date(Date.UTC(y, m, 1));
         const lastDay = new Date(Date.UTC(y, m + 1, 0));
         if (elements.csvStartDate) elements.csvStartDate.value = formatDateIso(firstDay);
@@ -1752,15 +1761,14 @@
 
     // Automatically set end date to the latest date that has a registered schedule
     const latestDate = getLatestScheduledDate();
-    const monday = getMondayOfIsoWeek(state.year, state.weekNum);
-    const mondayIso = formatDateIso(monday);
+    const todayWeek = getThisWeekMondayAndFridayFromToday();
 
     if (elements.csvStartDate) {
-      if (latestDate && mondayIso > latestDate) {
+      if (latestDate && todayWeek.monday > latestDate) {
         const { year: lYr, week: lWk } = getIsoWeekAndYear(latestDate);
         elements.csvStartDate.value = formatDateIso(getMondayOfIsoWeek(lYr, lWk));
       } else {
-        elements.csvStartDate.value = mondayIso;
+        elements.csvStartDate.value = todayWeek.monday;
       }
     }
 
@@ -1768,8 +1776,7 @@
       if (latestDate) {
         elements.csvEndDate.value = latestDate;
       } else {
-        const friday = new Date(monday.getTime() + 4 * 86400000);
-        elements.csvEndDate.value = formatDateIso(friday);
+        elements.csvEndDate.value = todayWeek.friday;
       }
     }
 
