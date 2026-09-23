@@ -1,0 +1,2279 @@
+[
+  {
+    "sheet_name": "PERIOD 21 Sep ~ 25 Sep",
+    "year": "2026",
+    "week": "Week 39",
+    "period": "PERIOD 21 Sep ~ 25 Sep",
+    "days": [
+      {
+        "day": "Monday",
+        "header": "MONDAY (21 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "header": "TUESDAY (22 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 11:30 AM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "J",
+                [
+                  "11:00 AM",
+                  "11:30 AM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "header": "WEDNESDAY (23 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Thursday",
+        "header": "THURSDAY (24 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Friday",
+        "header": "FRIDAY (25 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sheet_name": "PERIOD 14 Sep ~ 18 Sep",
+    "year": "2026",
+    "week": "Week 38",
+    "period": "PERIOD 14 Sep ~ 18 Sep",
+    "days": [
+      {
+        "day": "Monday",
+        "header": "MONDAY (14 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 5:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "U",
+                [
+                  "4:30 PM",
+                  "5:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "header": "TUESDAY (15 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 5:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "U",
+                [
+                  "4:30 PM",
+                  "5:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "header": "WEDNESDAY (16 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Thursday",
+        "header": "THURSDAY (17 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Friday",
+        "header": "FRIDAY (18 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "3:00 PM - 5:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "R",
+                [
+                  "3:00 PM",
+                  "3:30 PM"
+                ],
+                "in"
+              ],
+              [
+                "U",
+                [
+                  "4:30 PM",
+                  "5:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sheet_name": "PERIOD 7 Sep ~ 11 Sep",
+    "year": "2026",
+    "week": "Week 37",
+    "period": "PERIOD 7 Sep ~ 11 Sep",
+    "days": [
+      {
+        "day": "Monday",
+        "header": "MONDAY (7 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "header": "TUESDAY (8 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "header": "WEDNESDAY (9 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Thursday",
+        "header": "THURSDAY (10 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:30 AM - 1:00 PM",
+            "approval": "-",
+            "notes": "Airport Badge Meeting at 9-9:30am",
+            "slots": [
+              [
+                "G",
+                [
+                  "9:30 AM",
+                  "10:00 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "day": "Friday",
+        "header": "FRIDAY (11 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "-",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sheet_name": "PERIOD  31 Aug ~ 4 Sep",
+    "year": "2026",
+    "week": "Week 36",
+    "period": "PERIOD: 31 Aug ~ 4 Sep",
+    "days": [
+      {
+        "day": "Monday",
+        "header": "MONDAY (31 Aug)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "12:00 PM - 5:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "L",
+                [
+                  "12:00 PM",
+                  "12:30 PM"
+                ],
+                "in"
+              ],
+              [
+                "U",
+                [
+                  "4:30 PM",
+                  "5:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "In"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "Out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "-",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "header": "TUESDAY (1 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "In"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "Out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "-",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "header": "WEDNESDAY (2 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "10:00 AM - 3:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "H",
+                [
+                  "10:00 AM",
+                  "10:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "Q",
+                [
+                  "2:30 PM",
+                  "3:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "✓ Approved",
+            "notes": "FAA Written Exam Scheduled",
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "-",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Thursday",
+        "header": "THURSDAY (3 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "10:00 AM - 5:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "H",
+                [
+                  "10:00 AM",
+                  "10:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "U",
+                [
+                  "4:30 PM",
+                  "5:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "In"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "Out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "-",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Friday",
+        "header": "FRIDAY (4 Sep)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": true,
+            "shift_time": "OFF",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "8:00 AM - 12:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "D",
+                [
+                  "8:00 AM",
+                  "8:30 AM"
+                ],
+                "in"
+              ],
+              [
+                "K",
+                [
+                  "11:30 AM",
+                  "12:00 PM"
+                ],
+                "out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "9:00 AM - 1:00 PM",
+            "approval": "✓ Approved",
+            "notes": null,
+            "slots": [
+              [
+                "F",
+                [
+                  "9:00 AM",
+                  "9:30 AM"
+                ],
+                "In"
+              ],
+              [
+                "M",
+                [
+                  "12:30 PM",
+                  "1:00 PM"
+                ],
+                "Out"
+              ]
+            ]
+          },
+          {
+            "campus": "RDM",
+            "name": "-",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sheet_name": "Lists",
+    "year": "2026",
+    "week": "",
+    "period": "",
+    "days": [
+      {
+        "day": "Monday",
+        "header": "Week 5",
+        "shifts": [
+          {
+            "campus": "Week 8",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 9",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 10",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 11",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "header": "Week 13",
+        "shifts": [
+          {
+            "campus": "Week 16",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 17",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 18",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 19",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "header": "Week 21",
+        "shifts": [
+          {
+            "campus": "Week 24",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 25",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 26",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 27",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Thursday",
+        "header": "Week 29",
+        "shifts": [
+          {
+            "campus": "Week 32",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 33",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 34",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 35",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Friday",
+        "header": "Week 37",
+        "shifts": [
+          {
+            "campus": "Week 40",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 41",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 42",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          },
+          {
+            "campus": "Week 43",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": "",
+            "slots": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sheet_name": "Blank",
+    "year": "2026",
+    "week": "Week 1",
+    "period": "PERIOD 29 Dec ~ 2 Jan",
+    "days": [
+      {
+        "day": "Monday",
+        "header": "MONDAY (29 Dec)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "header": "TUESDAY (30 Dec)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "header": "WEDNESDAY (31 Dec)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Thursday",
+        "header": "THURSDAY (1 Jan)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      },
+      {
+        "day": "Friday",
+        "header": "FRIDAY (2 Jan)",
+        "shifts": [
+          {
+            "campus": "HIO",
+            "name": "Joseph",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "HIO",
+            "name": "Harry",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "John",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          },
+          {
+            "campus": "RDM",
+            "name": "Ben",
+            "dayoff": false,
+            "shift_time": "-",
+            "approval": "-",
+            "notes": null,
+            "slots": []
+          }
+        ]
+      }
+    ]
+  }
+]
