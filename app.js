@@ -542,6 +542,7 @@
     updateSaveButtons();
     render();
     showToast('Unsaved changes discarded.');
+    fetchCloudSchedules(true);
   }
 
   function getCurrentWeekKey() {
