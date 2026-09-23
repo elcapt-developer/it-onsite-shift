@@ -713,6 +713,9 @@
     if (elements.supervisorGroup) {
       elements.supervisorGroup.classList.toggle('is-unlocked', state.isSupervisor);
     }
+    if (elements.btnApproveWeekHeader) {
+      elements.btnApproveWeekHeader.style.display = state.isSupervisor ? 'inline-flex' : 'none';
+    }
     if (state.isSupervisor) {
       elements.btnSupervisor.textContent = '🔓 Supervisor ON';
       elements.btnSupervisor.classList.add('is-active-supervisor');
@@ -860,15 +863,25 @@
     });
 
     const isWeekAllApproved = weekApprovedCount === weekTotalCount && weekTotalCount > 0;
+    const weekApproveLabel = isWeekAllApproved 
+      ? `✓ Week Approved (${weekApprovedCount}/${weekTotalCount})` 
+      : `✓ Approve Entire Week (${weekApprovedCount}/${weekTotalCount})`;
+    const weekApproveClass = isWeekAllApproved ? 'btn-approve-week is-all-approved' : 'btn-approve-week';
 
     if (elements.btnApproveWeekHeader) {
-      elements.btnApproveWeekHeader.textContent = isWeekAllApproved 
-        ? `✓ Week Approved (${weekApprovedCount}/${weekTotalCount})` 
-        : `✓ Approve Entire Week (${weekApprovedCount}/${weekTotalCount})`;
+      elements.btnApproveWeekHeader.style.display = state.isSupervisor ? 'inline-flex' : 'none';
+      elements.btnApproveWeekHeader.textContent = weekApproveLabel;
       elements.btnApproveWeekHeader.classList.toggle('is-all-approved', isWeekAllApproved);
       elements.btnApproveWeekHeader.title = isWeekAllApproved
         ? `All ${weekApprovedCount}/${weekTotalCount} shifts approved (click to reset to Pending)`
         : `Approve all shifts for this week as Supervisor (${weekApprovedCount}/${weekTotalCount})`;
+    }
+
+    const dailyApproveBtn = document.getElementById('btnApproveWeek');
+    if (dailyApproveBtn) {
+      dailyApproveBtn.style.display = state.isSupervisor ? 'inline-flex' : 'none';
+      dailyApproveBtn.textContent = weekApproveLabel;
+      dailyApproveBtn.className = weekApproveClass;
     }
   }
 
@@ -1474,9 +1487,11 @@
             ${dateHeaderString}
           </span>
           <div class="day-header-actions">
-            <button type="button" class="${weekApproveClass}" id="btnApproveWeek" title="${state.isSupervisor ? 'Approve all shifts for this week' : 'Authenticate as Supervisor to approve this week'}">
+            ${state.isSupervisor ? `
+            <button type="button" class="${weekApproveClass}" id="btnApproveWeek" title="Approve all shifts for this week">
               ${weekApproveLabel}
             </button>
+            ` : ''}
           </div>
         </div>
 
