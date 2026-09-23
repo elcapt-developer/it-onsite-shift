@@ -1877,14 +1877,18 @@
   }
 
   function showToast(message) {
+    if (!elements.toastContainer) return;
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.textContent = message;
     elements.toastContainer.appendChild(toast);
 
     setTimeout(() => {
-      toast.remove();
-    }, 2000);
+      toast.classList.add('fade-out');
+      setTimeout(() => {
+        toast.remove();
+      }, 250);
+    }, 2600);
   }
 
   document.addEventListener('DOMContentLoaded', init);
