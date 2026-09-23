@@ -12,12 +12,17 @@
   const DAY_NAMES_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const DAY_NAMES_FULL_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+  function getTodayDate() {
+    const now = new Date();
+    return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  }
+
   // --- State ---
   const state = {
-    currentView: 'day', // 'month' | 'day'
-    selectedDate: new Date(Date.UTC(2026, 8, 22)), // 2026-09-22 default anchor
-    miniCalDate: new Date(Date.UTC(2026, 8, 22)),
-    year: 2026,
+    currentView: 'month', // 'month' | 'day'
+    selectedDate: getTodayDate(),
+    miniCalDate: getTodayDate(),
+    year: getTodayDate().getUTCFullYear(),
     weekNum: 39,
     isSupervisor: sessionStorage.getItem('it_shift_supervisor') === 'true',
     employees: window.DEFAULT_EMPLOYEES || [
@@ -136,11 +141,6 @@
     const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
     const dd = String(date.getUTCDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
-  }
-
-  function getTodayDate() {
-    const now = new Date();
-    return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
   }
 
   function getTodayIso() {
@@ -807,7 +807,11 @@
   }
 
   function executeApproveEntireWeek() {
-    const weekData = getOrCreateCurrentWeekData();
+    executeApproveWeekByYearAndNumber(state.year, state.weekNum);
+  }
+
+  function executeApproveWeekByYearAndNumber(year, weekNum) {
+    const weekData = getOrCreateWeekData(year, weekNum);
     let totalCount = 0;
     let approvedCount = 0;
 
@@ -822,12 +826,12 @@
     });
 
     if (totalCount === 0) {
-      showToast('No scheduled shifts found for this week.');
+      showToast(`No scheduled shifts found for Week ${weekNum} (${year}).`);
       return;
     }
 
     if (approvedCount === totalCount) {
-      const confirmReset = confirm(`All shifts for this week (${totalCount} shifts) are already Approved.\n\nDo you want to reset all of them to 'Pending'?`);
+      const confirmReset = confirm(`All shifts for Week ${weekNum} (${year}) (${totalCount} shifts) are already Approved.\n\nDo you want to reset all of them to 'Pending'?`);
       if (confirmReset) {
         weekData.days.forEach(d => {
           d.shifts.forEach(s => {
@@ -839,7 +843,7 @@
         });
         markDirty();
         render();
-        showToast('All shifts for this week have been reset to Pending.');
+        showToast(`Week ${weekNum} (${year}): Shifts reset to Pending.`);
       }
       return;
     }
@@ -855,7 +859,7 @@
 
     markDirty();
     render();
-    showToast(`🎉 All shifts for this week (${totalCount} total) have been Approved.`);
+    showToast(`🎉 Week ${weekNum} (${year}): All ${totalCount} shifts Approved.`);
   }
 
   function updateApproveWeekButtons() {
@@ -879,7 +883,7 @@
     const weekApproveClass = isWeekAllApproved ? 'btn-approve-week is-all-approved' : 'btn-approve-week';
 
     if (elements.btnApproveWeekHeader) {
-      elements.btnApproveWeekHeader.style.display = state.isSupervisor ? 'inline-flex' : 'none';
+      elements.btnApproveWeekHeader.style.display = (state.isSupervisor && state.currentView === 'day') ? 'inline-flex' : 'none';
       elements.btnApproveWeekHeader.textContent = weekApproveLabel;
       elements.btnApproveWeekHeader.classList.toggle('is-all-approved', isWeekAllApproved);
       elements.btnApproveWeekHeader.title = isWeekAllApproved
@@ -1152,6 +1156,7 @@
     updateApproveWeekButtons();
     updateSaveButtons();
     updateNavigatorBar();
+    syncViewSwitcherButtons();
     toggleViewContainers();
 
     if (state.currentView === 'month') {
@@ -1159,6 +1164,13 @@
     } else {
       renderDailyView();
     }
+  }
+
+  function syncViewSwitcherButtons() {
+    if (!elements.viewSwitcher) return;
+    elements.viewSwitcher.querySelectorAll('.view-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === state.currentView);
+    });
   }
 
   function toggleViewContainers() {
@@ -1294,9 +1306,12 @@
     const startDayOfWeek = firstDay.getUTCDay(); // 0 = Sun
     const gridStartDate = new Date(firstDay.getTime() - startDayOfWeek * 86400000);
 
+    const weekColHeader = state.isSupervisor ? 'Week / Approval' : 'Wk';
+
     let html = `
-      <div class="month-calendar-card">
+      <div class="month-calendar-card ${state.isSupervisor ? 'is-supervisor' : ''}">
         <div class="month-weekdays-grid">
+          <div class="month-weekday-header month-week-col-header">${weekColHeader}</div>
           <div class="month-weekday-header" style="color: #dc2626;">Sun</div>
           <div class="month-weekday-header">Mon</div>
           <div class="month-weekday-header">Tue</div>
@@ -1310,77 +1325,138 @@
 
     // 5 or 6 weeks (35 or 42 cells)
     const rowCount = (startDayOfWeek + totalDays) > 35 ? 42 : 35;
+    const numWeekRows = rowCount / 7;
 
-    for (let i = 0; i < rowCount; i++) {
-      const cellDate = new Date(gridStartDate.getTime() + i * 86400000);
-      const cellDateStr = formatDateIso(cellDate);
-      const isCurrentMonth = cellDate.getUTCMonth() === m;
-      const isToday = cellDateStr === getTodayIso();
-      const isSelected = cellDateStr === formatDateIso(state.selectedDate);
-      const dayNum = cellDate.getUTCDate();
-      const dayOfWeek = cellDate.getUTCDay();
+    for (let r = 0; r < numWeekRows; r++) {
+      // Calculate row week info using Thursday of this row (ISO-8601 standard)
+      const rowThursday = new Date(gridStartDate.getTime() + (r * 7 + 4) * 86400000);
+      const rowIso = getIsoWeekAndYear(formatDateIso(rowThursday));
+      const isActiveWeek = rowIso.year === state.year && rowIso.week === state.weekNum;
 
-      // Week info
-      const iso = getIsoWeekAndYear(cellDateStr);
-      const isActiveWeek = iso.year === state.year && iso.week === state.weekNum;
-
-      let cellClass = 'month-day-cell';
-      if (!isCurrentMonth) cellClass += ' other-month';
-      if (isActiveWeek) cellClass += ' is-active-week-cell';
-      if (isToday) cellClass += ' is-today';
-      if (isSelected) cellClass += ' is-selected';
-
-      let contentHtml = '';
-      let monthApprovalNeededHtml = '';
-      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        // Weekday shift summary
-        const dayData = getShiftForDate(cellDate);
-        if (dayData && dayData.shifts) {
-          let hasAnySchedule = false;
-          let hasUnapproved = false;
-          dayData.shifts.forEach(s => {
+      // Shifts count for this row's week
+      const weekData = getOrCreateWeekData(rowIso.year, rowIso.week);
+      let totalCount = 0;
+      let approvedCount = 0;
+      if (weekData && Array.isArray(weekData.days)) {
+        weekData.days.forEach(d => {
+          d.shifts.forEach(s => {
             const details = computeShiftDetails(s);
-            const hasSchedule = s.dayoff || details.isActive;
-            if (hasSchedule) {
-              hasAnySchedule = true;
-              if (s.approval !== 'Approved') {
-                hasUnapproved = true;
-              }
+            if (s.dayoff || details.isActive) {
+              totalCount++;
+              if (s.approval === 'Approved') approvedCount++;
             }
           });
-
-          if (hasAnySchedule && hasUnapproved) {
-            monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist">approval needed</span>';
-          }
-
-          contentHtml = '<div class="month-shifts-list">';
-          dayData.shifts.forEach((s, idx) => {
-            const emp = state.employees[idx];
-            const details = computeShiftDetails(s);
-            const isOff = details.isOff;
-            const shiftBadgeClass = isOff ? 'month-shift-tag is-off' : 'month-shift-tag';
-            contentHtml += `
-              <div class="${shiftBadgeClass}">
-                <span><strong>${emp.name}</strong></span>
-                <span>${details.shortText}</span>
-              </div>
-            `;
-          });
-          contentHtml += '</div>';
-        }
-      } else {
-        contentHtml = '<div class="month-weekend-label">Weekend</div>';
+        });
       }
 
-      html += `
-        <div class="${cellClass}" data-date="${cellDateStr}">
-          <div class="month-cell-header">
-            <span class="month-cell-date" style="${dayOfWeek === 0 ? 'color: #dc2626;' : dayOfWeek === 6 ? 'color: #2563eb;' : ''}">${dayNum}</span>
-            ${monthApprovalNeededHtml}
+      const isAllApproved = approvedCount === totalCount && totalCount > 0;
+      const isEmpty = totalCount === 0;
+
+      let weekCellHtml = '';
+      if (state.isSupervisor) {
+        let btnText = `✓ Approve (${approvedCount}/${totalCount})`;
+        let btnClass = 'btn-month-approve';
+        let btnTitle = `Approve all shifts for Week ${rowIso.week} (${approvedCount}/${totalCount})`;
+
+        if (isAllApproved) {
+          btnText = `✓ Approved (${approvedCount}/${totalCount})`;
+          btnClass += ' is-all-approved';
+          btnTitle = `All ${totalCount} shifts approved (click to reset to Pending)`;
+        } else if (isEmpty) {
+          btnText = '✓ Approve (0/0)';
+          btnClass += ' is-empty';
+          btnTitle = `No shifts scheduled for Week ${rowIso.week}`;
+        }
+
+        weekCellHtml = `
+          <div class="month-week-cell ${isActiveWeek ? 'is-active-week' : ''}" data-year="${rowIso.year}" data-week="${rowIso.week}">
+            <div class="month-week-badge-wrap">
+              <span class="month-week-badge" data-year="${rowIso.year}" data-week="${rowIso.week}" title="Jump to Week ${rowIso.week}">W${rowIso.week}</span>
+            </div>
+            <button type="button" class="${btnClass}" data-action="approve-week" data-year="${rowIso.year}" data-week="${rowIso.week}" ${isEmpty ? 'disabled' : ''} title="${btnTitle}">
+              ${btnText}
+            </button>
           </div>
-          ${contentHtml}
-        </div>
-      `;
+        `;
+      } else {
+        weekCellHtml = `
+          <div class="month-week-cell ${isActiveWeek ? 'is-active-week' : ''}" data-year="${rowIso.year}" data-week="${rowIso.week}">
+            <span class="month-week-badge" data-year="${rowIso.year}" data-week="${rowIso.week}" title="Jump to Week ${rowIso.week}">W${rowIso.week}</span>
+          </div>
+        `;
+      }
+
+      html += weekCellHtml;
+
+      // Days of this week (Sun to Sat)
+      for (let c = 0; c < 7; c++) {
+        const i = r * 7 + c;
+        const cellDate = new Date(gridStartDate.getTime() + i * 86400000);
+        const cellDateStr = formatDateIso(cellDate);
+        const isCurrentMonth = cellDate.getUTCMonth() === m;
+        const isToday = cellDateStr === getTodayIso();
+        const isSelected = cellDateStr === formatDateIso(state.selectedDate);
+        const dayNum = cellDate.getUTCDate();
+        const dayOfWeek = cellDate.getUTCDay();
+
+        let cellClass = 'month-day-cell';
+        if (!isCurrentMonth) cellClass += ' other-month';
+        if (isActiveWeek) cellClass += ' is-active-week-cell';
+        if (isToday) cellClass += ' is-today';
+        if (isSelected) cellClass += ' is-selected';
+
+        let contentHtml = '';
+        let monthApprovalNeededHtml = '';
+        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+          // Weekday shift summary
+          const dayData = getShiftForDate(cellDate);
+          if (dayData && dayData.shifts) {
+            let hasAnySchedule = false;
+            let hasUnapproved = false;
+            dayData.shifts.forEach(s => {
+              const details = computeShiftDetails(s);
+              const hasSchedule = s.dayoff || details.isActive;
+              if (hasSchedule) {
+                hasAnySchedule = true;
+                if (s.approval !== 'Approved') {
+                  hasUnapproved = true;
+                }
+              }
+            });
+
+            if (hasAnySchedule && hasUnapproved) {
+              monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist">approval needed</span>';
+            }
+
+            contentHtml = '<div class="month-shifts-list">';
+            dayData.shifts.forEach((s, idx) => {
+              const emp = state.employees[idx];
+              const details = computeShiftDetails(s);
+              const isOff = details.isOff;
+              const shiftBadgeClass = isOff ? 'month-shift-tag is-off' : 'month-shift-tag';
+              contentHtml += `
+                <div class="${shiftBadgeClass}">
+                  <span><strong>${emp.name}</strong></span>
+                  <span>${details.shortText}</span>
+                </div>
+              `;
+            });
+            contentHtml += '</div>';
+          }
+        } else {
+          contentHtml = '<div class="month-weekend-label">Weekend</div>';
+        }
+
+        html += `
+          <div class="${cellClass}" data-date="${cellDateStr}">
+            <div class="month-cell-header">
+              <span class="month-cell-date" style="${dayOfWeek === 0 ? 'color: #dc2626;' : dayOfWeek === 6 ? 'color: #2563eb;' : ''}">${dayNum}</span>
+              ${monthApprovalNeededHtml}
+            </div>
+            ${contentHtml}
+          </div>
+        `;
+      }
     }
 
     html += `
@@ -1390,7 +1466,35 @@
 
     elements.monthlyViewContainer.innerHTML = html;
 
-    // Attach click events on cells
+    // Attach click events on week approve buttons
+    elements.monthlyViewContainer.querySelectorAll('.btn-month-approve').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const yr = parseInt(btn.dataset.year, 10);
+        const wk = parseInt(btn.dataset.week, 10);
+        if (!isNaN(yr) && !isNaN(wk)) {
+          executeApproveWeekByYearAndNumber(yr, wk);
+        }
+      });
+    });
+
+    // Attach click events on week badges / cells to jump to that week's daily schedule
+    elements.monthlyViewContainer.querySelectorAll('.month-week-badge, .month-week-cell').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-month-approve')) return;
+        const yr = parseInt(el.dataset.year, 10);
+        const wk = parseInt(el.dataset.week, 10);
+        if (!isNaN(yr) && !isNaN(wk)) {
+          const mondayDate = getMondayOfIsoWeek(yr, wk);
+          state.selectedDate = mondayDate;
+          syncDateState();
+          switchView('day');
+          showToast(`Jumped to Week ${wk} (${formatDateIso(mondayDate)}).`);
+        }
+      });
+    });
+
+    // Attach click events on day cells
     elements.monthlyViewContainer.querySelectorAll('.month-day-cell').forEach(cell => {
       cell.addEventListener('click', () => {
         const dateStr = cell.dataset.date;
