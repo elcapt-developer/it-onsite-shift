@@ -1554,20 +1554,31 @@
 
       const hasAnySchedule = (workingCount + offCount) > 0;
       const todayBadgeHtml = isToday ? '<span class="today-badge">TODAY</span>' : '';
-      const approvalNeededHtml = (hasAnySchedule && hasUnapproved) 
-        ? '<span class="badge-approval-needed">approval needed</span>' 
-        : '';
+
+      let statusHtml = '';
+      if (!hasAnySchedule) {
+        statusHtml = '<span class="weekly-strip-status status-empty">— No Shifts</span>';
+      } else if (hasUnapproved) {
+        statusHtml = '<span class="weekly-strip-status status-needs-approval" title="Shifts need approval">● Needs Approval</span>';
+      } else {
+        const offText = offCount > 0 ? ` (${offCount} Off)` : '';
+        statusHtml = `<span class="weekly-strip-status status-approved" title="All shifts approved">✓ ${workingCount} Onsite${offText}</span>`;
+      }
 
       stripHtml += `
         <div class="weekly-strip-card ${isActiveDay ? 'is-active-day' : ''} ${isToday ? 'is-today' : ''}" 
              data-date="${dayDateIso}" 
-             title="Select ${d.header}">
+             title="Switch to ${d.header}">
           <div class="weekly-strip-top">
-            <span class="weekly-strip-day">${dayNamesEn[dIdx]} ${todayBadgeHtml}</span>
-            <span class="weekly-strip-date">${dayNum} <small style="font-size: 0.725rem; font-weight: normal; color: inherit; opacity: 0.75;">${monthShort}</small></span>
+            <span class="weekly-strip-day">${dayNamesEn[dIdx]}</span>
+            ${todayBadgeHtml}
+          </div>
+          <div class="weekly-strip-middle">
+            <span class="weekly-strip-date-num">${dayNum}</span>
+            <span class="weekly-strip-date-month">${monthShort}</span>
           </div>
           <div class="weekly-strip-bottom">
-            ${approvalNeededHtml}
+            ${statusHtml}
           </div>
         </div>
       `;
