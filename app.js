@@ -61,6 +61,8 @@
     btnExportCSV: document.getElementById('btnExportCSV'),
     btnSaveChanges: document.getElementById('btnSaveChanges'),
     btnDiscardChanges: document.getElementById('btnDiscardChanges'),
+    cloudStatusBadge: document.getElementById('cloudStatusBadge'),
+    cloudStatusText: document.getElementById('cloudStatusText'),
     csvExportModal: document.getElementById('csvExportModal'),
     btnCloseCsvModal: document.getElementById('btnCloseCsvModal'),
     btnCancelCsvModal: document.getElementById('btnCancelCsvModal'),
@@ -198,7 +200,27 @@
     return { startSlot: -1, endSlot: -1 };
   }
 
-  function loadSchedules() {
+  const API_ENDPOINT = '/api/schedules';
+
+  function updateCloudBadge(status) {
+    if (!elements.cloudStatusBadge || !elements.cloudStatusText) return;
+    elements.cloudStatusBadge.classList.remove('syncing', 'offline');
+
+    if (status === 'syncing') {
+      elements.cloudStatusBadge.classList.add('syncing');
+      elements.cloudStatusText.textContent = 'Syncing...';
+      elements.cloudStatusBadge.title = 'Synchronizing with cloud database...';
+    } else if (status === 'offline') {
+      elements.cloudStatusBadge.classList.add('offline');
+      elements.cloudStatusText.textContent = 'Offline Cache';
+      elements.cloudStatusBadge.title = 'Running on local offline cache';
+    } else {
+      elements.cloudStatusText.textContent = 'Cloud Synced';
+      elements.cloudStatusBadge.title = 'Connected to Vercel Upstash Cloud Database';
+    }
+  }
+
+  function loadLocalCache() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -223,40 +245,97 @@
 
         state.lastSavedSnapshot = JSON.stringify(state.schedules);
         state.hasUnsavedChanges = false;
+        return true;
+      }
+    } catch (e) {
+      console.warn('Failed to load local cache', e);
+    }
+    return false;
+  }
+
+  function saveLocalCache() {
+    try {
+      const envelope = {
+        schedules: state.schedules,
+        updated_at: state.lastSavedTimestamp
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+    } catch (e) {
+      console.warn('Failed to save local cache', e);
+    }
+  }
+
+  function loadSchedules() {
+    // 1. Immediately load local cache for instantaneous UI rendering
+    const hasCached = loadLocalCache();
+    if (!hasCached) {
+      initializeFromDefaults();
+    }
+
+    // 2. Fetch latest from Cloud Database asynchronously
+    fetchCloudSchedules(false);
+  }
+
+  async function fetchCloudSchedules(silent = false) {
+    if (!silent) updateCloudBadge('syncing');
+    try {
+      const res = await fetch(API_ENDPOINT);
+      if (!res.ok) {
+        updateCloudBadge('offline');
         return;
       }
 
-      // Check migration from V5 (18 slots -> 8 one-hour slots)
-      const oldStored = localStorage.getItem(OLD_STORAGE_KEY_V5);
-      if (oldStored) {
-        state.schedules = JSON.parse(oldStored);
-        Object.values(state.schedules).forEach(weekObj => {
-          if (weekObj && Array.isArray(weekObj.days)) {
-            weekObj.days.forEach(day => {
-              if (Array.isArray(day.shifts)) {
-                day.shifts.forEach(shift => {
-                  if (shift && shift.startSlot >= 0 && shift.endSlot >= 0) {
-                    let newStart = Math.floor(shift.startSlot / 2);
-                    let newEnd = Math.floor(shift.endSlot / 2);
-                    newStart = Math.max(0, Math.min(7, newStart));
-                    newEnd = Math.max(0, Math.min(7, newEnd));
-                    if (newStart > newEnd) newEnd = newStart;
-                    shift.startSlot = newStart;
-                    shift.endSlot = newEnd;
+      const data = await res.json();
+      if (data && data.schedules) {
+        // If cloud data is newer or local had no timestamp
+        if (!state.lastSavedTimestamp || (typeof data.updated_at === 'number' && data.updated_at > state.lastSavedTimestamp)) {
+          if (!state.hasUnsavedChanges) {
+            state.schedules = data.schedules;
+            state.lastSavedTimestamp = data.updated_at;
+            Object.values(state.schedules).forEach(weekObj => {
+              if (weekObj && Array.isArray(weekObj.days)) {
+                weekObj.days.forEach(day => {
+                  if (Array.isArray(day.shifts)) {
+                    sortShiftsByEmployeeOrder(day.shifts);
                   }
                 });
-                sortShiftsByEmployeeOrder(day.shifts);
               }
             });
+            state.lastSavedSnapshot = JSON.stringify(state.schedules);
+            state.hasUnsavedChanges = false;
+            saveLocalCache();
+            render();
+            if (silent) {
+              showToast('Schedule synchronized with cloud.');
+            }
+          } else {
+            showToast('Notice: Newer schedules are available on cloud. Please save or discard your changes.');
           }
-        });
-        saveSchedules();
-        return;
+        }
+        updateCloudBadge('synced');
+      } else if (data && data.schedules === null) {
+        // Cloud is currently empty: seed cloud with current schedules
+        updateCloudBadge('syncing');
+        await sendSchedulesToCloud(state.schedules, 0, true);
+        updateCloudBadge('synced');
       }
-    } catch (e) {
-      console.warn('Failed to load storage', e);
+    } catch (err) {
+      console.warn('Could not connect to cloud API, using local cache:', err);
+      updateCloudBadge('offline');
     }
-    initializeFromDefaults();
+  }
+
+  async function sendSchedulesToCloud(schedules, lastKnownUpdatedAt, force = false) {
+    const res = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        schedules: schedules,
+        lastKnownUpdatedAt: lastKnownUpdatedAt,
+        force: force
+      })
+    });
+    return res;
   }
 
   function initializeFromDefaults() {
@@ -312,24 +391,18 @@
       };
     });
 
-    saveSchedules();
+    state.lastSavedTimestamp = Date.now();
+    state.lastSavedSnapshot = JSON.stringify(state.schedules);
+    state.hasUnsavedChanges = false;
+    saveLocalCache();
   }
 
   function saveSchedules() {
-    try {
-      state.lastSavedTimestamp = Date.now();
-      const envelope = {
-        schedules: state.schedules,
-        updated_at: state.lastSavedTimestamp
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
-      state.lastSavedSnapshot = JSON.stringify(state.schedules);
-      state.hasUnsavedChanges = false;
-      updateSaveButtons();
-    } catch (e) {
-      console.error('Failed to save to localStorage', e);
-      showToast('Error saving data to local storage.');
-    }
+    state.lastSavedTimestamp = Date.now();
+    state.lastSavedSnapshot = JSON.stringify(state.schedules);
+    state.hasUnsavedChanges = false;
+    saveLocalCache();
+    updateSaveButtons();
   }
 
   // --- Change Tracking & Persistence Controls ---
@@ -346,7 +419,7 @@
       elements.btnSaveChanges.classList.add('has-changes');
       elements.btnSaveChanges.classList.remove('is-saved');
       elements.btnSaveChanges.textContent = '💾 Save Changes';
-      elements.btnSaveChanges.title = 'Click to save pending changes';
+      elements.btnSaveChanges.title = 'Click to save pending changes to cloud';
 
       if (elements.btnDiscardChanges) {
         elements.btnDiscardChanges.style.display = 'inline-flex';
@@ -364,47 +437,87 @@
     }
   }
 
-  function handleSaveChanges() {
+  async function handleSaveChanges() {
     if (!state.hasUnsavedChanges) return;
 
-    // Detect data conflicts if newer changes exist in localStorage
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed && typeof parsed.updated_at === 'number' && state.lastSavedTimestamp > 0) {
-          if (parsed.updated_at > state.lastSavedTimestamp) {
-            const proceed = confirm(
-              '⚠️ Conflict Warning:\n\n' +
-              'Newer shift data was detected in storage (possibly modified from another session or tab).\n\n' +
-              'Saving now will overwrite those external changes.\n\n' +
-              'Click OK to overwrite and save your current changes, or Cancel to review.'
-            );
-            if (!proceed) {
-              return;
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.warn('Conflict check error', e);
-    }
-
-    saveSchedules();
-
     if (elements.btnSaveChanges) {
-      elements.btnSaveChanges.classList.remove('has-changes');
-      elements.btnSaveChanges.classList.add('is-saved');
-      elements.btnSaveChanges.textContent = '✓ Saved!';
-      setTimeout(() => {
-        if (elements.btnSaveChanges) {
-          elements.btnSaveChanges.classList.remove('is-saved');
-          updateSaveButtons();
-        }
-      }, 1800);
+      elements.btnSaveChanges.disabled = true;
+      elements.btnSaveChanges.textContent = '💾 Saving...';
     }
+    updateCloudBadge('syncing');
 
-    showToast('All changes have been successfully saved.');
+    let forceOverwrite = false;
+
+    try {
+      let res = await sendSchedulesToCloud(state.schedules, state.lastSavedTimestamp, false);
+
+      // Handle 409 Conflict (Another user saved newer changes)
+      if (res.status === 409) {
+        const proceed = confirm(
+          '⚠️ Cloud Conflict Warning:\n\n' +
+          'Another team member recently saved newer changes to the cloud database.\n\n' +
+          'Saving now will overwrite their changes with your current edits.\n\n' +
+          'Click OK to overwrite and save, or Cancel to review.'
+        );
+
+        if (!proceed) {
+          updateSaveButtons();
+          updateCloudBadge('synced');
+          return;
+        }
+
+        // User confirmed overwrite
+        forceOverwrite = true;
+        res = await sendSchedulesToCloud(state.schedules, state.lastSavedTimestamp, true);
+      }
+
+      if (res.ok) {
+        const json = await res.json();
+        state.lastSavedTimestamp = json.updated_at || Date.now();
+        state.lastSavedSnapshot = JSON.stringify(state.schedules);
+        state.hasUnsavedChanges = false;
+        saveLocalCache();
+        updateCloudBadge('synced');
+
+        if (elements.btnSaveChanges) {
+          elements.btnSaveChanges.classList.remove('has-changes');
+          elements.btnSaveChanges.classList.add('is-saved');
+          elements.btnSaveChanges.textContent = '✓ Saved!';
+          setTimeout(() => {
+            if (elements.btnSaveChanges) {
+              elements.btnSaveChanges.classList.remove('is-saved');
+              updateSaveButtons();
+            }
+          }, 1800);
+        }
+
+        showToast('All changes have been successfully saved to cloud.');
+        return;
+      } else {
+        throw new Error('Server returned ' + res.status);
+      }
+    } catch (err) {
+      console.warn('Cloud save failed, falling back to local cache:', err);
+      state.lastSavedTimestamp = Date.now();
+      state.lastSavedSnapshot = JSON.stringify(state.schedules);
+      state.hasUnsavedChanges = false;
+      saveLocalCache();
+      updateCloudBadge('offline');
+
+      if (elements.btnSaveChanges) {
+        elements.btnSaveChanges.classList.remove('has-changes');
+        elements.btnSaveChanges.classList.add('is-saved');
+        elements.btnSaveChanges.textContent = '✓ Saved (Local)!';
+        setTimeout(() => {
+          if (elements.btnSaveChanges) {
+            elements.btnSaveChanges.classList.remove('is-saved');
+            updateSaveButtons();
+          }
+        }, 1800);
+      }
+
+      showToast('Cloud unreachable: Changes saved to local cache.');
+    }
   }
 
   function handleDiscardChanges() {
@@ -948,7 +1061,7 @@
     window.addEventListener('storage', (e) => {
       if (e.key === STORAGE_KEY) {
         if (!state.hasUnsavedChanges) {
-          loadSchedules();
+          loadLocalCache();
           render();
           showToast('Schedule data updated from another tab.');
         } else {
@@ -956,6 +1069,15 @@
         }
       }
     });
+
+    // Periodic & window-focus cloud synchronization
+    window.addEventListener('focus', () => {
+      fetchCloudSchedules(true);
+    });
+
+    setInterval(() => {
+      fetchCloudSchedules(true);
+    }, 45000);
   }
 
   function navigateDate(delta) {

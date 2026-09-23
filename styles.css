@@ -140,6 +140,44 @@ body {
   background: #eff6ff;
 }
 
+/* Cloud Status Badge */
+.cloud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.cloud-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.cloud-badge.syncing .cloud-dot {
+  background: #3b82f6;
+  animation: pulseDot 1s infinite;
+}
+
+.cloud-badge.offline .cloud-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
 /* Save & Discard Action Buttons */
 .btn-save {
   background: #f1f5f9;
