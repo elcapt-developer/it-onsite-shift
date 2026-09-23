@@ -52,6 +52,7 @@
     dailyViewContainer: document.getElementById('dailyViewContainer'),
     btnApproveWeekHeader: document.getElementById('btnApproveWeekHeader'),
     btnSupervisor: document.getElementById('btnSupervisor'),
+    supervisorGroup: document.getElementById('supervisorGroup'),
     supervisorModal: document.getElementById('supervisorModal'),
     supervisorPasswordInput: document.getElementById('supervisorPasswordInput'),
     supervisorErrorMsg: document.getElementById('supervisorErrorMsg'),
@@ -709,6 +710,9 @@
 
   function updateSupervisorButton() {
     if (!elements.btnSupervisor) return;
+    if (elements.supervisorGroup) {
+      elements.supervisorGroup.classList.toggle('is-unlocked', state.isSupervisor);
+    }
     if (state.isSupervisor) {
       elements.btnSupervisor.textContent = '🔓 Supervisor ON';
       elements.btnSupervisor.classList.add('is-active-supervisor');
@@ -752,6 +756,8 @@
       if (target) {
         if (target.action === 'approve_week') {
           executeApproveEntireWeek();
+        } else if (target.action === 'export_csv') {
+          openCsvExportModal();
         } else {
           const { day, empIdx } = target;
           const weekData = getOrCreateCurrentWeekData();
@@ -974,7 +980,13 @@
 
     // Top Header Actions
     if (elements.btnExportCSV) {
-      elements.btnExportCSV.addEventListener('click', openCsvExportModal);
+      elements.btnExportCSV.addEventListener('click', () => {
+        if (!state.isSupervisor) {
+          openSupervisorModal({ action: 'export_csv' });
+          return;
+        }
+        openCsvExportModal();
+      });
     }
 
     // CSV Modal Controls

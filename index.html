@@ -24,9 +24,14 @@
           <span class="cloud-dot"></span>
           <span id="cloudStatusText" class="cloud-text">Cloud Synced</span>
         </span>
-        <button id="btnApproveWeekHeader" class="btn btn-approve-week" title="Approve all shifts for this week">✓ Approve Entire Week</button>
-        <button id="btnSupervisor" class="btn btn-supervisor" title="Supervisor Mode">🔒 Supervisor</button>
-        <button id="btnExportCSV" class="btn" title="Export to CSV">Export CSV</button>
+        <!-- Supervisor Action Group -->
+        <div class="supervisor-group" id="supervisorGroup">
+          <span class="supervisor-group-label">Supervisor</span>
+          <button id="btnSupervisor" class="btn btn-supervisor" title="Supervisor Mode">🔒 Supervisor</button>
+          <button id="btnApproveWeekHeader" class="btn btn-approve-week" title="Approve all shifts for this week">✓ Approve Entire Week</button>
+          <button id="btnExportCSV" class="btn btn-export-csv" title="Export to CSV">Export CSV</button>
+        </div>
+
         <button id="btnDiscardChanges" class="btn btn-discard" style="display: none;" title="Discard unsaved changes">Discard</button>
         <button id="btnSaveChanges" class="btn btn-save" disabled title="No unsaved changes">💾 Save Changes</button>
       </div>
