@@ -723,7 +723,7 @@
     } else {
       elements.btnSupervisor.textContent = '🔒 Supervisor';
       elements.btnSupervisor.classList.remove('is-active-supervisor');
-      elements.btnSupervisor.title = 'Switch to Supervisor mode (Password: nosaj)';
+      elements.btnSupervisor.title = 'Switch to Supervisor mode (Password: haa)';
     }
   }
 
@@ -750,7 +750,7 @@
 
   function handleSupervisorAuth() {
     const entered = (elements.supervisorPasswordInput ? elements.supervisorPasswordInput.value : '').trim();
-    if (entered === 'nosaj') {
+    if (entered === 'haa') {
       state.isSupervisor = true;
       sessionStorage.setItem('it_shift_supervisor', 'true');
       const target = pendingApprovalTarget;

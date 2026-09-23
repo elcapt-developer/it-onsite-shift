@@ -23,7 +23,7 @@ A modern, responsive, and clean web application designed to manage, schedule, an
 
 4. **Supervisor Mode & Approval Workflow**
    - 3-stage status cycling: **`Pending`** ➔ **`Approved`** ➔ **`Denied`**.
-   - Security-locked for Supervisors: requires password authentication (`nosaj`) to toggle shift approval statuses.
+   - Security-locked for Supervisors: requires password authentication (`haa`) to toggle shift approval statuses.
    - Single-click **`✓ Approve Entire Week`** bulk approval tool for rapid supervisor sign-offs.
 
 5. **Date-Range CSV Export with Notes**
