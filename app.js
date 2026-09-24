@@ -1425,7 +1425,7 @@
             });
 
             if (hasAnySchedule && hasUnapproved) {
-              monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist">approval needed</span>';
+              monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist"><span class="month-approval-dot"></span>Needs Approval</span>';
             }
 
             contentHtml = '<div class="month-shifts-list">';
