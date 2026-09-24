@@ -2037,19 +2037,53 @@
     showToast(`CSV export complete (${startStr} ~ ${endStr}, ${rowCount} records)`);
   }
 
-  function showToast(message) {
+  function showToast(message, duration = 5000) {
     if (!elements.toastContainer) return;
+
+    // Keep active toasts capped at 3 to prevent vertical stacking overflow
+    while (elements.toastContainer.children.length >= 3) {
+      elements.toastContainer.firstElementChild.remove();
+    }
+
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.textContent = message;
+    toast.title = 'Click to dismiss';
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'toast-text';
+    textSpan.textContent = message;
+    toast.appendChild(textSpan);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast-close';
+    closeBtn.setAttribute('type', 'button');
+    closeBtn.setAttribute('aria-label', 'Close notification');
+    closeBtn.innerHTML = '&times;';
+    toast.appendChild(closeBtn);
+
     elements.toastContainer.appendChild(toast);
 
-    setTimeout(() => {
+    let dismissed = false;
+    let timerId = null;
+
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      if (timerId) clearTimeout(timerId);
       toast.classList.add('fade-out');
       setTimeout(() => {
         toast.remove();
       }, 250);
-    }, 2600);
+    };
+
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dismiss();
+    });
+
+    toast.addEventListener('click', dismiss);
+
+    timerId = setTimeout(dismiss, duration);
   }
 
   document.addEventListener('DOMContentLoaded', init);

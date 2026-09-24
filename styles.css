@@ -1389,21 +1389,52 @@ body {
 .toast {
   background: rgba(15, 23, 42, 0.94);
   color: #f8fafc;
-  padding: 11px 22px;
+  padding: 10px 16px 10px 20px;
   border-radius: 9999px;
   font-size: 0.925rem;
   font-weight: 500;
   box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-align: center;
   pointer-events: auto;
+  cursor: pointer;
   animation: toastSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.toast:hover {
+  background: rgba(15, 23, 42, 0.98);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.toast-text {
+  line-height: 1.35;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.15rem;
+  line-height: 1;
+  padding: 2px 5px;
+  cursor: pointer;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.toast-close:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .toast.fade-out {
