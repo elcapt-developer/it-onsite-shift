@@ -3,10 +3,10 @@
  * Extracted directly from IT Onsite Weekly Shift.xlsx
  */
 window.DEFAULT_EMPLOYEES = [
-  { id: "john", name: "John", campus: "RDM", role: "Onsite IT Engineer", color: "#059669" },
-  { id: "ben", name: "Ben", campus: "RDM", role: "Onsite IT Engineer", color: "#10b981" },
-  { id: "harry", name: "Harry", campus: "HIO", role: "Onsite IT Engineer", color: "#0284c7" },
-  { id: "joseph", name: "Joseph", campus: "HIO", role: "Onsite IT Engineer", color: "#2563eb" }
+  { id: "john", name: "John", campus: "RDM", role: "Onsite IT", color: "#059669" },
+  { id: "ben", name: "Ben", campus: "RDM", role: "Onsite IT", color: "#10b981" },
+  { id: "harry", name: "Harry", campus: "HIO", role: "Onsite IT", color: "#0284c7" },
+  { id: "joseph", name: "Joseph", campus: "HIO", role: "Onsite IT", color: "#2563eb" }
 ];
 
 window.TIME_SLOTS = [
