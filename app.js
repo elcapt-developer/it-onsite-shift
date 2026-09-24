@@ -5,8 +5,11 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'IT_ONSITE_SHIFT_DATA_V6';
-  const OLD_STORAGE_KEY_V5 = 'IT_ONSITE_SHIFT_DATA_V5';
+  const STORAGE_KEY = 'IT_ONSITE_SHIFT_DATA_V7';
+  try {
+    localStorage.removeItem('IT_ONSITE_SHIFT_DATA_V6');
+    localStorage.removeItem('IT_ONSITE_SHIFT_DATA_V5');
+  } catch (e) {}
   const EMPLOYEE_ORDER = ['John', 'Ben', 'Harry', 'Joseph'];
   const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const DAY_NAMES_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -240,7 +243,7 @@
           state.lastSavedTimestamp = parsed.updated_at;
         } else {
           state.schedules = parsed || {};
-          state.lastSavedTimestamp = Date.now();
+          state.lastSavedTimestamp = 0;
         }
 
         Object.values(state.schedules).forEach(weekObj => {
@@ -289,7 +292,13 @@
   async function fetchCloudSchedules(silent = false) {
     if (!silent) updateCloudBadge('syncing');
     try {
-      const res = await fetch(API_ENDPOINT);
+      const res = await fetch(`${API_ENDPOINT}?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) {
         updateCloudBadge('offline');
         return;
@@ -297,11 +306,14 @@
 
       const data = await res.json();
       if (data && data.schedules) {
-        // If cloud data is newer or local had no timestamp
-        if (!state.lastSavedTimestamp || (typeof data.updated_at === 'number' && data.updated_at > state.lastSavedTimestamp)) {
-          if (!state.hasUnsavedChanges) {
+        const cloudUpdatedAt = typeof data.updated_at === 'number' ? data.updated_at : 0;
+        const cloudSnapshot = JSON.stringify(data.schedules);
+
+        if (!state.hasUnsavedChanges) {
+          // As long as there are no uncommitted local edits, ALWAYS sync with the cloud source of truth!
+          if (cloudSnapshot !== state.lastSavedSnapshot || cloudUpdatedAt !== state.lastSavedTimestamp) {
             state.schedules = data.schedules;
-            state.lastSavedTimestamp = data.updated_at;
+            state.lastSavedTimestamp = cloudUpdatedAt;
             Object.values(state.schedules).forEach(weekObj => {
               if (weekObj && Array.isArray(weekObj.days)) {
                 weekObj.days.forEach(day => {
@@ -311,14 +323,17 @@
                 });
               }
             });
-            state.lastSavedSnapshot = JSON.stringify(state.schedules);
+            state.lastSavedSnapshot = cloudSnapshot;
             state.hasUnsavedChanges = false;
             saveLocalCache();
             render();
             if (silent) {
               showToast('Schedule synchronized with cloud.');
             }
-          } else {
+          }
+        } else {
+          // Only warn if the user has uncommitted edits and cloud data is newer
+          if (cloudUpdatedAt > state.lastSavedTimestamp) {
             showToast('Notice: Newer schedules are available on cloud. Please save or discard your changes.');
           }
         }
@@ -401,10 +416,9 @@
       };
     });
 
-    state.lastSavedTimestamp = Date.now();
+    state.lastSavedTimestamp = 0;
     state.lastSavedSnapshot = JSON.stringify(state.schedules);
     state.hasUnsavedChanges = false;
-    saveLocalCache();
   }
 
   function saveSchedules() {
@@ -1187,7 +1201,7 @@
 
     setInterval(() => {
       fetchCloudSchedules(true);
-    }, 45000);
+    }, 12000);
   }
 
   function navigateDate(delta) {
