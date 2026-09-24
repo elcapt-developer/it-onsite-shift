@@ -1342,12 +1342,17 @@
         <div class="month-days-grid">
     `;
 
+    // Today's ISO week info
+    const todayIso = getTodayIso();
+    const todayIsoInfo = getIsoWeekAndYear(todayIso);
+
     for (let r = 0; r < weekMondays.length; r++) {
       const rowMonday = weekMondays[r];
       // Thursday of this row (ISO-8601 standard week anchor)
       const rowThursday = new Date(rowMonday.getTime() + 3 * 86400000);
       const rowIso = getIsoWeekAndYear(formatDateIso(rowThursday));
       const isActiveWeek = rowIso.year === state.year && rowIso.week === state.weekNum;
+      const isCurrentWeek = rowIso.year === todayIsoInfo.year && rowIso.week === todayIsoInfo.week;
 
       // Shifts count for this row's week
       const weekData = getOrCreateWeekData(rowIso.year, rowIso.week);
@@ -1368,6 +1373,17 @@
       const isAllApproved = approvedCount === totalCount && totalCount > 0;
       const isEmpty = totalCount === 0;
 
+      const currentWeekBadgeHtml = isCurrentWeek
+        ? `<span class="month-this-week-pill" title="Current Week">THIS WEEK</span>`
+        : '';
+
+      let weekCellClass = 'month-week-cell';
+      if (isActiveWeek) weekCellClass += ' is-active-week';
+      if (isCurrentWeek) weekCellClass += ' is-current-week';
+
+      let weekBadgeClass = 'month-week-badge';
+      if (isCurrentWeek) weekBadgeClass += ' is-current-week-badge';
+
       let weekCellHtml = '';
       if (state.isSupervisor) {
         let btnText = `✓ Approve (${approvedCount}/${totalCount})`;
@@ -1385,9 +1401,10 @@
         }
 
         weekCellHtml = `
-          <div class="month-week-cell ${isActiveWeek ? 'is-active-week' : ''}" data-year="${rowIso.year}" data-week="${rowIso.week}">
+          <div class="${weekCellClass}" data-year="${rowIso.year}" data-week="${rowIso.week}">
             <div class="month-week-badge-wrap">
-              <span class="month-week-badge" data-year="${rowIso.year}" data-week="${rowIso.week}" title="Jump to Week ${rowIso.week}">W${rowIso.week}</span>
+              <span class="${weekBadgeClass}" data-year="${rowIso.year}" data-week="${rowIso.week}" title="Jump to Week ${rowIso.week}">W${rowIso.week}</span>
+              ${currentWeekBadgeHtml}
             </div>
             <button type="button" class="${btnClass}" data-action="approve-week" data-year="${rowIso.year}" data-week="${rowIso.week}" ${isEmpty ? 'disabled' : ''} title="${btnTitle}">
               ${btnText}
@@ -1396,8 +1413,11 @@
         `;
       } else {
         weekCellHtml = `
-          <div class="month-week-cell ${isActiveWeek ? 'is-active-week' : ''}" data-year="${rowIso.year}" data-week="${rowIso.week}">
-            <span class="month-week-badge" data-year="${rowIso.year}" data-week="${rowIso.week}" title="Jump to Week ${rowIso.week}">W${rowIso.week}</span>
+          <div class="${weekCellClass}" data-year="${rowIso.year}" data-week="${rowIso.week}">
+            <div class="month-week-badge-wrap">
+              <span class="${weekBadgeClass}" data-year="${rowIso.year}" data-week="${rowIso.week}" title="Jump to Week ${rowIso.week}">W${rowIso.week}</span>
+              ${currentWeekBadgeHtml}
+            </div>
           </div>
         `;
       }
@@ -1409,13 +1429,15 @@
         const cellDate = new Date(rowMonday.getTime() + c * 86400000);
         const cellDateStr = formatDateIso(cellDate);
         const isCurrentMonth = cellDate.getUTCMonth() === m;
-        const isToday = cellDateStr === getTodayIso();
+        const isToday = cellDateStr === todayIso;
         const isSelected = cellDateStr === formatDateIso(state.selectedDate);
         const dayNum = cellDate.getUTCDate();
 
         let cellClass = 'month-day-cell';
         if (!isCurrentMonth) cellClass += ' other-month';
         if (isActiveWeek) cellClass += ' is-active-week-cell';
+        if (isCurrentWeek) cellClass += ' is-current-week-cell';
+        if (c === 4 && isCurrentWeek) cellClass += ' is-current-week-end';
         if (isToday) cellClass += ' is-today';
         if (isSelected) cellClass += ' is-selected';
 
@@ -1458,10 +1480,17 @@
           contentHtml += '</div>';
         }
 
+        const todayBadgeHtml = isToday
+          ? `<span class="month-today-pill">TODAY</span>`
+          : '';
+
         html += `
           <div class="${cellClass}" data-date="${cellDateStr}">
             <div class="month-cell-header">
-              <span class="month-cell-date">${dayNum}</span>
+              <div class="month-date-wrap">
+                <span class="month-cell-date ${isToday ? 'is-today-num' : ''}">${dayNum}</span>
+                ${todayBadgeHtml}
+              </div>
               ${monthApprovalNeededHtml}
             </div>
             ${contentHtml}
