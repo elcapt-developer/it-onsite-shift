@@ -1007,29 +1007,80 @@ body {
   box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
 }
 
-/* Monthly Cell Approval Needed Badge */
-.month-approval-needed {
+/* Monthly Cell Approval Button & Status Pills */
+.month-day-approve-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 0.62rem;
   font-weight: 700;
+  padding: 1.5px 6.5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.month-day-approve-btn.is-needs-approval {
   color: #92400e;
   background: #fef3c7;
   border: 1px solid #fde68a;
+  box-shadow: 0 1px 2px rgba(245, 158, 11, 0.08);
+}
+
+.month-day-approve-btn.is-needs-approval:hover {
+  background: #fde68a;
+  border-color: #f59e0b;
+  color: #78350f;
+  box-shadow: 0 1px 4px rgba(245, 158, 11, 0.22);
+  transform: translateY(-0.5px);
+}
+
+.month-day-approve-btn.is-needs-approval.is-supervisor {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+.month-day-approve-btn.is-needs-approval.is-supervisor:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+  box-shadow: 0 1px 4px rgba(22, 163, 74, 0.25);
+}
+
+.month-day-approve-btn.is-approved {
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  box-shadow: 0 1px 2px rgba(22, 163, 74, 0.08);
+}
+
+.month-day-approve-btn.is-approved:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+  box-shadow: 0 1px 4px rgba(220, 38, 38, 0.2);
+  transform: translateY(-0.5px);
+}
+
+.month-day-status-pill.is-approved {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
   padding: 1.5px 6px;
   border-radius: 4px;
   white-space: nowrap;
   letter-spacing: -0.01em;
   line-height: 1.25;
-  box-shadow: 0 1px 2px rgba(245, 158, 11, 0.08);
-  transition: all 0.15s ease;
-}
-
-.month-day-cell:hover .month-approval-needed {
-  background: #fde68a;
-  border-color: #f59e0b;
-  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.18);
 }
 
 .month-approval-dot {
@@ -1510,6 +1561,61 @@ body {
 .btn-approve-week.is-all-approved:hover {
   background: #dcfce7;
   border-color: #4ade80;
+}
+
+/* Approve Day Button (Daily View) */
+.btn-approve-day {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-approve-day:hover {
+  background: #dbeafe;
+  border-color: #60a5fa;
+  color: #1e40af;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-approve-day:active {
+  transform: translateY(0);
+}
+
+.btn-approve-day.is-all-approved {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.btn-approve-day.is-all-approved:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+}
+
+.btn-approve-day.is-empty {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Weekly Strip Status Button */
+.weekly-strip-status.is-btn {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.weekly-strip-status.is-btn:hover {
+  transform: scale(1.05);
 }
 
 /* Modal Backdrop & Card */

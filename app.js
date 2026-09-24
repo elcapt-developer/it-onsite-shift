@@ -769,6 +769,8 @@
       if (target) {
         if (target.action === 'approve_week') {
           executeApproveEntireWeek();
+        } else if (target.action === 'approve_day') {
+          executeApproveDay(target.date);
         } else if (target.action === 'export_csv') {
           openCsvExportModal();
         } else {
@@ -860,6 +862,75 @@
     markDirty();
     render();
     showToast(`🎉 Week ${weekNum} (${year}): All ${totalCount} shifts Approved.`);
+  }
+
+  function handleApproveDayRequest(dateStr) {
+    if (!state.isSupervisor) {
+      openSupervisorModal({ action: 'approve_day', date: dateStr });
+      return;
+    }
+    executeApproveDay(dateStr);
+  }
+
+  function executeApproveDay(dateOrStr) {
+    let dateObj;
+    if (typeof dateOrStr === 'string') {
+      const parts = dateOrStr.split('-').map(Number);
+      dateObj = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    } else {
+      dateObj = dateOrStr;
+    }
+
+    const dateStr = formatDateIso(dateObj);
+    const dayData = getShiftForDate(dateObj);
+
+    if (!dayData || !Array.isArray(dayData.shifts)) {
+      showToast(`No shifts found for ${dateStr}.`);
+      return;
+    }
+
+    let totalCount = 0;
+    let approvedCount = 0;
+
+    dayData.shifts.forEach(s => {
+      const details = computeShiftDetails(s);
+      if (s.dayoff || details.isActive) {
+        totalCount++;
+        if (s.approval === 'Approved') approvedCount++;
+      }
+    });
+
+    if (totalCount === 0) {
+      showToast(`No scheduled shifts found for ${dateStr}.`);
+      return;
+    }
+
+    if (approvedCount === totalCount) {
+      const confirmReset = confirm(`All ${totalCount} shifts for ${dateStr} are already Approved.\n\nDo you want to reset all of them to 'Pending'?`);
+      if (confirmReset) {
+        dayData.shifts.forEach(s => {
+          const details = computeShiftDetails(s);
+          if (s.dayoff || details.isActive) {
+            s.approval = 'Pending';
+          }
+        });
+        markDirty();
+        render();
+        showToast(`${dateStr}: Shifts reset to Pending.`);
+      }
+      return;
+    }
+
+    dayData.shifts.forEach(s => {
+      const details = computeShiftDetails(s);
+      if (s.dayoff || details.isActive) {
+        s.approval = 'Approved';
+      }
+    });
+
+    markDirty();
+    render();
+    showToast(`🎉 ${dateStr}: All ${totalCount} shifts Approved.`);
   }
 
   function updateApproveWeekButtons() {
@@ -1446,22 +1517,50 @@
 
         // Weekday shift summary
         const dayData = getShiftForDate(cellDate);
+        let dayTotalCount = 0;
+        let dayApprovedCount = 0;
         if (dayData && dayData.shifts) {
-          let hasAnySchedule = false;
-          let hasUnapproved = false;
           dayData.shifts.forEach(s => {
             const details = computeShiftDetails(s);
             const hasSchedule = s.dayoff || details.isActive;
             if (hasSchedule) {
-              hasAnySchedule = true;
-              if (s.approval !== 'Approved') {
-                hasUnapproved = true;
+              dayTotalCount++;
+              if (s.approval === 'Approved') {
+                dayApprovedCount++;
               }
             }
           });
 
-          if (hasAnySchedule && hasUnapproved) {
-            monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist"><span class="month-approval-dot"></span>Needs Approval</span>';
+          const hasAnySchedule = dayTotalCount > 0;
+          const hasUnapproved = hasAnySchedule && (dayApprovedCount < dayTotalCount);
+          const isAllApproved = hasAnySchedule && (dayApprovedCount === dayTotalCount);
+
+          if (hasUnapproved) {
+            if (state.isSupervisor) {
+              monthApprovalNeededHtml = `
+                <button type="button" class="month-day-approve-btn is-needs-approval is-supervisor" data-action="approve-day" data-date="${cellDateStr}" title="Click to approve all ${dayTotalCount} shifts for ${cellDateStr}">
+                  ✓ Approve Day
+                </button>
+              `;
+            } else {
+              monthApprovalNeededHtml = `
+                <button type="button" class="month-day-approve-btn is-needs-approval" data-action="approve-day" data-date="${cellDateStr}" title="Needs approval (Click to authenticate as Supervisor)">
+                  <span class="month-approval-dot"></span>Needs Approval
+                </button>
+              `;
+            }
+          } else if (isAllApproved) {
+            if (state.isSupervisor) {
+              monthApprovalNeededHtml = `
+                <button type="button" class="month-day-approve-btn is-approved is-supervisor" data-action="reset-day" data-date="${cellDateStr}" title="All ${dayTotalCount} shifts approved (Click to reset to Pending)">
+                  ✓ Approved
+                </button>
+              `;
+            } else {
+              monthApprovalNeededHtml = `
+                <span class="month-day-status-pill is-approved" title="All shifts approved">✓ Approved</span>
+              `;
+            }
           }
 
           contentHtml = '<div class="month-shifts-list">';
@@ -1506,6 +1605,16 @@
 
     elements.monthlyViewContainer.innerHTML = html;
 
+    // Attach click events on day approve buttons in monthly view
+    elements.monthlyViewContainer.querySelectorAll('.month-day-approve-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dateStr = btn.dataset.date;
+        if (!dateStr) return;
+        handleApproveDayRequest(dateStr);
+      });
+    });
+
     // Attach click events on week approve buttons
     elements.monthlyViewContainer.querySelectorAll('.btn-month-approve').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -1536,7 +1645,8 @@
 
     // Attach click events on day cells
     elements.monthlyViewContainer.querySelectorAll('.month-day-cell').forEach(cell => {
-      cell.addEventListener('click', () => {
+      cell.addEventListener('click', (e) => {
+        if (e.target.closest('.month-day-approve-btn')) return;
         const dateStr = cell.dataset.date;
         if (!dateStr) return;
         const parts = dateStr.split('-').map(Number);
@@ -1599,9 +1709,17 @@
       if (!hasAnySchedule) {
         statusHtml = '<span class="weekly-strip-status status-empty">— No Shifts</span>';
       } else if (hasUnapproved) {
-        statusHtml = '<span class="weekly-strip-status status-needs-approval" title="Shifts need approval">● Needs Approval</span>';
+        if (state.isSupervisor) {
+          statusHtml = `<button type="button" class="weekly-strip-status status-needs-approval is-btn" data-action="approve-day" data-date="${dayDateIso}" title="Click to approve all shifts for this day">● Needs Approval</button>`;
+        } else {
+          statusHtml = '<span class="weekly-strip-status status-needs-approval" title="Shifts need approval">● Needs Approval</span>';
+        }
       } else {
-        statusHtml = '<span class="weekly-strip-status status-approved" title="All shifts approved">✓ Approved</span>';
+        if (state.isSupervisor) {
+          statusHtml = `<button type="button" class="weekly-strip-status status-approved is-btn" data-action="reset-day" data-date="${dayDateIso}" title="All shifts approved (click to reset)">✓ Approved</button>`;
+        } else {
+          statusHtml = '<span class="weekly-strip-status status-approved" title="All shifts approved">✓ Approved</span>';
+        }
       }
 
       stripHtml += `
@@ -1625,6 +1743,26 @@
     stripHtml += '</div>';
 
     // 2. Build Focused Daily Table
+    let dayTotalCount = 0;
+    let dayApprovedCount = 0;
+    if (dayObj && Array.isArray(dayObj.shifts)) {
+      dayObj.shifts.forEach(s => {
+        const details = computeShiftDetails(s);
+        if (s.dayoff || details.isActive) {
+          dayTotalCount++;
+          if (s.approval === 'Approved') dayApprovedCount++;
+        }
+      });
+    }
+    const isDayAllApproved = dayApprovedCount === dayTotalCount && dayTotalCount > 0;
+    const isDayEmpty = dayTotalCount === 0;
+    const dayApproveLabel = isDayAllApproved
+      ? `✓ Day Approved (${dayApprovedCount}/${dayTotalCount})`
+      : `✓ Approve Day (${dayApprovedCount}/${dayTotalCount})`;
+    let dayApproveClass = 'btn-approve-day';
+    if (isDayAllApproved) dayApproveClass += ' is-all-approved';
+    if (isDayEmpty) dayApproveClass += ' is-empty';
+
     let weekTotalCount = 0;
     let weekApprovedCount = 0;
     weekData.days.forEach(d => {
@@ -1652,6 +1790,9 @@
           </span>
           <div class="day-header-actions">
             ${state.isSupervisor ? `
+            <button type="button" class="${dayApproveClass}" id="btnApproveDay" ${isDayEmpty ? 'disabled' : ''} title="${isDayAllApproved ? 'All shifts approved for this day (click to reset)' : 'Approve all shifts for this day'}">
+              ${dayApproveLabel}
+            </button>
             <button type="button" class="${weekApproveClass}" id="btnApproveWeek" title="Approve all shifts for this week">
               ${weekApproveLabel}
             </button>
@@ -1685,9 +1826,19 @@
       </div>
     `;
 
+    // Click on Weekly Strip Status Buttons to approve/reset day
+    elements.dailyViewContainer.querySelectorAll('.weekly-strip-status.is-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dateStr = btn.dataset.date;
+        if (dateStr) handleApproveDayRequest(dateStr);
+      });
+    });
+
     // 3. Attach Click on 5-Day Strip Cards to switch active day instantly
     elements.dailyViewContainer.querySelectorAll('.weekly-strip-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.weekly-strip-status.is-btn')) return;
         const dateStr = card.dataset.date;
         if (!dateStr) return;
         const parts = dateStr.split('-').map(Number);
@@ -1894,7 +2045,15 @@
       });
     });
 
-    // 5. Bulk Week Approval Button
+    // 5. Bulk Day Approval Button (Daily View)
+    const btnApproveDay = container.querySelector('#btnApproveDay');
+    if (btnApproveDay) {
+      btnApproveDay.addEventListener('click', () => {
+        handleApproveDayRequest(formatDateIso(state.selectedDate));
+      });
+    }
+
+    // 6. Bulk Week Approval Button
     const btnApproveWeek = container.querySelector('#btnApproveWeek');
     if (btnApproveWeek) {
       btnApproveWeek.addEventListener('click', handleApproveWeekRequest);
