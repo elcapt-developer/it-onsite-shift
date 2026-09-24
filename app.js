@@ -1561,8 +1561,7 @@
       } else if (hasUnapproved) {
         statusHtml = '<span class="weekly-strip-status status-needs-approval" title="Shifts need approval">● Needs Approval</span>';
       } else {
-        const offText = offCount > 0 ? ` (${offCount} Off)` : '';
-        statusHtml = `<span class="weekly-strip-status status-approved" title="All shifts approved">✓ ${workingCount} Onsite${offText}</span>`;
+        statusHtml = '<span class="weekly-strip-status status-approved" title="All shifts approved">✓ Approved</span>';
       }
 
       stripHtml += `
