@@ -999,7 +999,7 @@
     const weekApproveClass = isWeekAllApproved ? 'btn-approve-week is-all-approved' : 'btn-approve-week';
 
     if (elements.btnApproveWeekHeader) {
-      elements.btnApproveWeekHeader.style.display = (state.isSupervisor && state.currentView === 'day') ? 'inline-flex' : 'none';
+      elements.btnApproveWeekHeader.style.display = state.isSupervisor ? 'inline-flex' : 'none';
       elements.btnApproveWeekHeader.textContent = weekApproveLabel;
       elements.btnApproveWeekHeader.classList.toggle('is-all-approved', isWeekAllApproved);
       elements.btnApproveWeekHeader.title = isWeekAllApproved
@@ -1057,15 +1057,17 @@
         if (e.target === elements.supervisorModal) closeSupervisorModal();
       });
     }
-    // 2-Stage View Switcher
-    elements.viewSwitcher.addEventListener('click', (e) => {
-      const btn = e.target.closest('.view-btn');
-      if (!btn) return;
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.currentView = btn.dataset.view;
-      render();
-    });
+    // View Switcher (if present)
+    if (elements.viewSwitcher) {
+      elements.viewSwitcher.addEventListener('click', (e) => {
+        const btn = e.target.closest('.view-btn');
+        if (!btn) return;
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentView = btn.dataset.view;
+        render();
+      });
+    }
 
     // Navigator Prev / Next / Today
     elements.btnNavPrev.addEventListener('click', () => navigateDate(-1));
@@ -1242,84 +1244,63 @@
   }
 
   function navigateDate(delta) {
-    if (state.currentView === 'month') {
-      // Navigate month
-      const y = state.selectedDate.getUTCFullYear();
-      const m = state.selectedDate.getUTCMonth() + delta;
-      state.selectedDate = new Date(Date.UTC(y, m, 1));
-    } else {
-      // Navigate day (skip weekends for weekday work shift: Fri -> Mon, Mon -> Fri)
-      const dayOfWeek = state.selectedDate.getUTCDay();
-      let dayStep = delta;
-      if (delta > 0) {
-        if (dayOfWeek === 5) dayStep = 3; // Fri -> Mon
-        else if (dayOfWeek === 6) dayStep = 2; // Sat -> Mon
-      } else if (delta < 0) {
-        if (dayOfWeek === 1) dayStep = -3; // Mon -> Fri
-        else if (dayOfWeek === 0) dayStep = -2; // Sun -> Fri
-      }
-      state.selectedDate = new Date(state.selectedDate.getTime() + dayStep * 86400000);
+    // Navigate month in unified view
+    const y = state.selectedDate.getUTCFullYear();
+    const m = state.selectedDate.getUTCMonth() + delta;
+    state.selectedDate = new Date(Date.UTC(y, m, 1));
+    const dow = state.selectedDate.getUTCDay();
+    if (dow === 0) state.selectedDate.setUTCDate(state.selectedDate.getUTCDate() + 1);
+    else if (dow === 6) state.selectedDate.setUTCDate(state.selectedDate.getUTCDate() + 2);
+    syncDateState();
+    render();
+  }
+
+  function navigateDay(delta) {
+    // Navigate day (skip weekends: Fri -> Mon, Mon -> Fri)
+    const dayOfWeek = state.selectedDate.getUTCDay();
+    let dayStep = delta;
+    if (delta > 0) {
+      if (dayOfWeek === 5) dayStep = 3; // Fri -> Mon
+      else if (dayOfWeek === 6) dayStep = 2; // Sat -> Mon
+    } else if (delta < 0) {
+      if (dayOfWeek === 1) dayStep = -3; // Mon -> Fri
+      else if (dayOfWeek === 0) dayStep = -2; // Sun -> Fri
     }
+    state.selectedDate = new Date(state.selectedDate.getTime() + dayStep * 86400000);
     syncDateState();
     render();
   }
 
   // --- Main Render Dispatcher ---
   function render() {
-    if (state.currentView !== 'month') {
-      const dayOfWeek = state.selectedDate.getUTCDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        state.selectedDate = getMondayOfIsoWeek(state.year, state.weekNum);
-        syncDateState();
-      }
+    const dayOfWeek = state.selectedDate.getUTCDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      state.selectedDate = getMondayOfIsoWeek(state.year, state.weekNum);
+      syncDateState();
     }
 
     updateSupervisorButton();
     updateApproveWeekButtons();
     updateSaveButtons();
     updateNavigatorBar();
-    syncViewSwitcherButtons();
-    toggleViewContainers();
 
-    if (state.currentView === 'month') {
-      renderMonthlyView();
-    } else {
-      renderDailyView();
+    if (elements.monthlyViewContainer) elements.monthlyViewContainer.style.display = 'block';
+    if (elements.dailyViewContainer) elements.dailyViewContainer.style.display = 'block';
+
+    if (elements.instructionsBar) {
+      elements.instructionsBar.textContent = 'Click any date cell in the calendar to view and edit its daily schedule below.';
     }
-  }
 
-  function syncViewSwitcherButtons() {
-    if (!elements.viewSwitcher) return;
-    elements.viewSwitcher.querySelectorAll('.view-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.view === state.currentView);
-    });
-  }
-
-  function toggleViewContainers() {
-    elements.monthlyViewContainer.style.display = state.currentView === 'month' ? 'block' : 'none';
-    elements.dailyViewContainer.style.display = state.currentView === 'day' ? 'block' : 'none';
-
-    if (state.currentView === 'month') {
-      elements.instructionsBar.textContent = 'Click a date cell to view and edit that day\'s schedule.';
-    } else {
-      elements.instructionsBar.textContent = 'Click the 5-day cards at top to switch days, and click time slots to set shifts.';
-    }
+    renderMonthlyView();
+    renderDailyView();
   }
 
   function updateNavigatorBar() {
     const y = state.selectedDate.getUTCFullYear();
     const m = state.selectedDate.getUTCMonth();
-    const d = state.selectedDate.getUTCDate();
-    const dayOfWeek = state.selectedDate.getUTCDay();
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    // Update title based on active view
-    if (state.currentView === 'month') {
-      elements.navTitleLabel.textContent = `${monthNames[m]} ${y}`;
-    } else {
-      elements.navTitleLabel.textContent = `${DAY_NAMES_FULL_EN[dayOfWeek]}, ${monthShort[m]} ${d}, ${y}`;
-    }
+    elements.navTitleLabel.textContent = `${monthNames[m]} ${y}`;
 
     if (elements.miniCalPopover && elements.miniCalPopover.style.display === 'block') {
       renderMiniCal();
@@ -1688,8 +1669,8 @@
           const mondayDate = getMondayOfIsoWeek(yr, wk);
           state.selectedDate = mondayDate;
           syncDateState();
-          switchView('day');
-          showToast(`Jumped to Week ${wk} (${formatDateIso(mondayDate)}).`);
+          render();
+          showToast(`Selected Week ${wk} (${formatDateIso(mondayDate)}).`);
         }
       });
     });
@@ -1703,7 +1684,10 @@
         const parts = dateStr.split('-').map(Number);
         state.selectedDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
         syncDateState();
-        switchView('day');
+        render();
+        if (elements.dailyViewContainer) {
+          elements.dailyViewContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       });
     });
   }
@@ -1725,75 +1709,9 @@
     const weekData = getOrCreateCurrentWeekData();
     const dayObj = weekData.days[dayIndex];
     const dateHeaderString = getDayHeaderString(dayIndex, state.year, state.weekNum);
+    const dateIso = formatDateIso(state.selectedDate);
 
-    // 1. Build 5-Day Weekly Strip
-    const monday = getMondayOfIsoWeek(state.year, state.weekNum);
-    const dayNamesEn = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-
-    let stripHtml = '<div class="weekly-calendar-strip">';
-    weekData.days.forEach((d, dIdx) => {
-      const dayDate = new Date(monday.getTime() + dIdx * 86400000);
-      const dayDateIso = formatDateIso(dayDate);
-      const isToday = dayDateIso === getTodayIso();
-      const isActiveDay = dIdx === dayIndex;
-      const dayNum = dayDate.getUTCDate();
-      const monthShort = formatDateShort(dayDate).split(' ')[1];
-
-      let workingCount = 0;
-      let offCount = 0;
-      let hasUnapproved = false;
-      d.shifts.forEach(s => {
-        const details = computeShiftDetails(s);
-        const hasSchedule = s.dayoff || details.isActive;
-        if (s.dayoff) offCount++;
-        else if (details.isActive) workingCount++;
-
-        if (hasSchedule && s.approval !== 'Approved') {
-          hasUnapproved = true;
-        }
-      });
-
-      const hasAnySchedule = (workingCount + offCount) > 0;
-      const todayBadgeHtml = isToday ? '<span class="today-badge">TODAY</span>' : '';
-
-      let statusHtml = '';
-      if (!hasAnySchedule) {
-        statusHtml = '<span class="weekly-strip-status status-empty">— No Shifts</span>';
-      } else if (hasUnapproved) {
-        if (state.isSupervisor) {
-          statusHtml = `<button type="button" class="weekly-strip-status status-needs-approval is-btn" data-action="approve-day" data-date="${dayDateIso}" title="Click to approve all shifts for this day">● Needs Approval</button>`;
-        } else {
-          statusHtml = '<span class="weekly-strip-status status-needs-approval" title="Shifts need approval">● Needs Approval</span>';
-        }
-      } else {
-        if (state.isSupervisor) {
-          statusHtml = `<button type="button" class="weekly-strip-status status-approved is-btn" data-action="reset-day" data-date="${dayDateIso}" title="All shifts approved (click to reset)">✓ Approved</button>`;
-        } else {
-          statusHtml = '<span class="weekly-strip-status status-approved" title="All shifts approved">✓ Approved</span>';
-        }
-      }
-
-      stripHtml += `
-        <div class="weekly-strip-card ${isActiveDay ? 'is-active-day' : ''} ${isToday ? 'is-today' : ''}" 
-             data-date="${dayDateIso}" 
-             title="Switch to ${d.header}">
-          <div class="weekly-strip-top">
-            <span class="weekly-strip-day">${dayNamesEn[dIdx]}</span>
-            ${todayBadgeHtml}
-          </div>
-          <div class="weekly-strip-middle">
-            <span class="weekly-strip-date-num">${dayNum}</span>
-            <span class="weekly-strip-date-month">${monthShort}</span>
-          </div>
-          <div class="weekly-strip-bottom">
-            ${statusHtml}
-          </div>
-        </div>
-      `;
-    });
-    stripHtml += '</div>';
-
-    // 2. Build Focused Daily Table
+    // Build Focused Daily Table
     let dayTotalCount = 0;
     let dayApprovedCount = 0;
     if (dayObj && Array.isArray(dayObj.shifts)) {
@@ -1832,16 +1750,21 @@
     const weekApproveClass = isWeekAllApproved ? 'btn-approve-week is-all-approved' : 'btn-approve-week';
 
     elements.dailyViewContainer.innerHTML = `
-      ${stripHtml}
-
-      <div class="day-section">
+      <div class="day-section unified-day-section" id="daySectionContainer">
         <div class="day-header">
-          <span class="day-name" style="cursor: default;">
-            ${dateHeaderString}
-          </span>
+          <div class="day-header-left">
+            <span class="daily-section-pill">📅 Daily Schedule</span>
+            <span class="day-name">
+              ${dateHeaderString}
+            </span>
+            <div class="day-nav-arrows">
+              <button type="button" class="btn-day-step" id="btnDailyPrevDay" title="Previous weekday (◀)">◀</button>
+              <button type="button" class="btn-day-step" id="btnDailyNextDay" title="Next weekday (▶)">▶</button>
+            </div>
+          </div>
           <div class="day-header-actions">
             ${state.isSupervisor ? `
-            <button type="button" class="${dayApproveClass}" id="btnApproveDay" ${isDayEmpty ? 'disabled' : ''} title="${isDayAllApproved ? 'All shifts approved for this day (click to reset)' : 'Approve all shifts for this day'}">
+            <button type="button" class="${dayApproveClass}" id="btnApproveDay" data-date="${dateIso}" ${isDayEmpty ? 'disabled' : ''} title="${isDayAllApproved ? 'All shifts approved for this day (click to reset)' : 'Approve all shifts for this day'}">
               ${dayApproveLabel}
             </button>
             <button type="button" class="${weekApproveClass}" id="btnApproveWeek" title="Approve all shifts for this week">
@@ -1877,27 +1800,15 @@
       </div>
     `;
 
-    // Click on Weekly Strip Status Buttons to approve/reset day
-    elements.dailyViewContainer.querySelectorAll('.weekly-strip-status.is-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const dateStr = btn.dataset.date;
-        if (dateStr) handleApproveDayRequest(dateStr);
-      });
-    });
-
-    // 3. Attach Click on 5-Day Strip Cards to switch active day instantly
-    elements.dailyViewContainer.querySelectorAll('.weekly-strip-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.weekly-strip-status.is-btn')) return;
-        const dateStr = card.dataset.date;
-        if (!dateStr) return;
-        const parts = dateStr.split('-').map(Number);
-        state.selectedDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-        syncDateState();
-        render();
-      });
-    });
+    // Attach Prev / Next day button handlers
+    const btnDailyPrevDay = elements.dailyViewContainer.querySelector('#btnDailyPrevDay');
+    if (btnDailyPrevDay) {
+      btnDailyPrevDay.addEventListener('click', () => navigateDay(-1));
+    }
+    const btnDailyNextDay = elements.dailyViewContainer.querySelector('#btnDailyNextDay');
+    if (btnDailyNextDay) {
+      btnDailyNextDay.addEventListener('click', () => navigateDay(1));
+    }
 
     const tbody = elements.dailyViewContainer.querySelector('#tbody-daily');
     renderEmployeeRows(tbody, dayObj, 'daily');
