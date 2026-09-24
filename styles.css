@@ -1232,12 +1232,11 @@ body {
 .schedule-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
 }
 
 .schedule-table th,
 .schedule-table td {
-  padding: 7px 10px;
+  padding: 7px 8px;
   text-align: left;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
@@ -1256,39 +1255,42 @@ body {
 }
 
 .col-campus {
-  width: 65px;
+  width: 55px;
   text-align: center;
 }
 
 .col-name {
-  width: 100px;
+  width: 85px;
   font-weight: 600;
   font-size: 0.875rem;
 }
 
 .col-off {
-  width: 65px;
+  width: 55px;
   text-align: center;
 }
 
 .col-timeline {
-  min-width: 500px;
+  width: 250px;
+  min-width: 240px;
 }
 
 .col-shifttime {
-  width: 155px;
-  font-size: 0.825rem;
+  width: 120px;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--text-main);
+  white-space: nowrap;
 }
 
 .col-approval {
-  width: 104px;
+  width: 100px;
   text-align: center;
 }
 
 .col-notes {
-  width: 180px;
+  width: auto;
+  min-width: 240px;
 }
 
 /* Campus badge */
@@ -1325,11 +1327,11 @@ body {
 }
 
 .timeline-hour-slot {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   user-select: none;
   font-weight: 600;
-  padding: 2px 0;
+  padding: 1px 0;
 }
 
 .timeline-hour-slot.major {
@@ -1348,13 +1350,13 @@ body {
 }
 
 .time-slot-cell {
-  height: 26px;
+  height: 22px;
   background: #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
   color: var(--text-dim);
   border-radius: 3px;
@@ -1363,7 +1365,7 @@ body {
 }
 
 .daily-table .time-slot-cell {
-  height: 34px;
+  height: 20px;
 }
 
 .time-slot-cell:hover {
@@ -1383,7 +1385,7 @@ body {
 
 .time-slot-cell.slot-in::after {
   content: "IN";
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   font-weight: 800;
 }
 
@@ -1394,13 +1396,13 @@ body {
 
 .time-slot-cell.slot-out::after {
   content: "OUT";
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   font-weight: 800;
 }
 
 .time-slot-cell.slot-in.slot-out::after {
   content: "IN/OUT";
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   font-weight: 800;
 }
 
@@ -1468,17 +1470,20 @@ body {
 /* Notes Input */
 .notes-input {
   width: 100%;
-  padding: 4px 7px;
+  box-sizing: border-box;
+  padding: 5px 8px;
   font-size: 0.8rem;
   color: var(--text-main);
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: 4px;
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .notes-input:focus {
-  border-color: var(--border-dark);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 .notes-input::placeholder {
