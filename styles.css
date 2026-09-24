@@ -1435,6 +1435,11 @@ body {
   align-items: center;
   gap: 8px;
   pointer-events: none;
+  transition: bottom 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-container.has-unsaved-bar {
+  bottom: 72px;
 }
 
 .toast {
@@ -1745,4 +1750,148 @@ body {
 .app-footer p {
   margin: 0;
   letter-spacing: 0.02em;
+}
+
+/* Body adjustment when unsaved changes bar is active */
+body.has-unsaved-bar {
+  padding-bottom: 76px;
+}
+
+/* Fixed Bottom Red Bar for Unsaved Changes */
+.unsaved-changes-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9990;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #ffffff;
+  box-shadow: 0 -4px 20px rgba(185, 28, 28, 0.35), 0 -1px 3px rgba(0, 0, 0, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  animation: slideUpBottomBar 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpBottomBar {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.unsaved-bar-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.unsaved-bar-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.unsaved-bar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.775rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.unsaved-bar-text {
+  font-size: 0.885rem;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+.unsaved-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.btn-unsaved-discard {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-unsaved-discard:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
+}
+
+.btn-unsaved-save {
+  background: #ffffff;
+  color: #b91c1c;
+  border: 1px solid #ffffff;
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.btn-unsaved-save:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #991b1b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.btn-unsaved-save:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .unsaved-bar-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .unsaved-bar-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  body.has-unsaved-bar {
+    padding-bottom: 105px;
+  }
+  .toast-container.has-unsaved-bar {
+    bottom: 110px;
+  }
 }

@@ -82,7 +82,10 @@
     btnPresetThisWeek: document.getElementById('btnPresetThisWeek'),
     btnPresetThisMonth: document.getElementById('btnPresetThisMonth'),
     btnPresetAll: document.getElementById('btnPresetAll'),
-    toastContainer: document.getElementById('toastContainer')
+    toastContainer: document.getElementById('toastContainer'),
+    unsavedChangesBar: document.getElementById('unsavedChangesBar'),
+    btnBottomSave: document.getElementById('btnBottomSave'),
+    btnBottomDiscard: document.getElementById('btnBottomDiscard')
   };
 
   // --- Initialization ---
@@ -448,6 +451,19 @@
       if (elements.btnDiscardChanges) {
         elements.btnDiscardChanges.style.display = 'inline-flex';
       }
+
+      // Show fixed bottom red bar
+      if (elements.unsavedChangesBar) {
+        elements.unsavedChangesBar.style.display = 'block';
+      }
+      if (elements.btnBottomSave) {
+        elements.btnBottomSave.disabled = false;
+        elements.btnBottomSave.textContent = '💾 Save Changes';
+      }
+      document.body.classList.add('has-unsaved-bar');
+      if (elements.toastContainer) {
+        elements.toastContainer.classList.add('has-unsaved-bar');
+      }
     } else {
       elements.btnSaveChanges.disabled = true;
       elements.btnSaveChanges.classList.remove('has-changes');
@@ -458,6 +474,15 @@
       if (elements.btnDiscardChanges) {
         elements.btnDiscardChanges.style.display = 'none';
       }
+
+      // Hide fixed bottom red bar
+      if (elements.unsavedChangesBar) {
+        elements.unsavedChangesBar.style.display = 'none';
+      }
+      document.body.classList.remove('has-unsaved-bar');
+      if (elements.toastContainer) {
+        elements.toastContainer.classList.remove('has-unsaved-bar');
+      }
     }
   }
 
@@ -467,6 +492,10 @@
     if (elements.btnSaveChanges) {
       elements.btnSaveChanges.disabled = true;
       elements.btnSaveChanges.textContent = '💾 Saving...';
+    }
+    if (elements.btnBottomSave) {
+      elements.btnBottomSave.disabled = true;
+      elements.btnBottomSave.textContent = '💾 Saving...';
     }
     updateCloudBadge('syncing');
 
@@ -502,6 +531,7 @@
         state.hasUnsavedChanges = false;
         saveLocalCache();
         updateCloudBadge('synced');
+        updateSaveButtons();
 
         if (elements.btnSaveChanges) {
           elements.btnSaveChanges.classList.remove('has-changes');
@@ -527,6 +557,7 @@
       state.hasUnsavedChanges = false;
       saveLocalCache();
       updateCloudBadge('offline');
+      updateSaveButtons();
 
       if (elements.btnSaveChanges) {
         elements.btnSaveChanges.classList.remove('has-changes');
@@ -741,13 +772,13 @@
       elements.btnApproveWeekHeader.style.display = state.isSupervisor ? 'inline-flex' : 'none';
     }
     if (state.isSupervisor) {
-      elements.btnSupervisor.textContent = '🔓 Supervisor ON';
+      elements.btnSupervisor.textContent = '🔓 Supervisor Mode ON';
       elements.btnSupervisor.classList.add('is-active-supervisor');
-      elements.btnSupervisor.title = 'Supervisor mode active (click to log out)';
+      elements.btnSupervisor.title = 'Supervisor Mode active (click to log out)';
     } else {
-      elements.btnSupervisor.textContent = '🔒 Supervisor';
+      elements.btnSupervisor.textContent = '🔒 Supervisor Mode';
       elements.btnSupervisor.classList.remove('is-active-supervisor');
-      elements.btnSupervisor.title = 'Switch to Supervisor mode (Password: haa)';
+      elements.btnSupervisor.title = 'Switch to Supervisor Mode (Password: haa)';
     }
   }
 
@@ -800,7 +831,7 @@
           }
         }
       } else {
-        showToast('Supervisor mode activated.');
+        showToast('Supervisor Mode activated.');
       }
       render();
     } else {
@@ -998,7 +1029,7 @@
           state.isSupervisor = false;
           sessionStorage.removeItem('it_shift_supervisor');
           render();
-          showToast('Supervisor mode deactivated.');
+          showToast('Supervisor Mode deactivated.');
         } else {
           openSupervisorModal(null);
         }
@@ -1171,6 +1202,12 @@
     }
     if (elements.btnDiscardChanges) {
       elements.btnDiscardChanges.addEventListener('click', handleDiscardChanges);
+    }
+    if (elements.btnBottomSave) {
+      elements.btnBottomSave.addEventListener('click', handleSaveChanges);
+    }
+    if (elements.btnBottomDiscard) {
+      elements.btnBottomDiscard.addEventListener('click', handleDiscardChanges);
     }
 
     // Warn before closing tab if unsaved changes exist
