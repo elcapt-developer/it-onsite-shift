@@ -1298,13 +1298,34 @@
     const y = state.selectedDate.getUTCFullYear();
     const m = state.selectedDate.getUTCMonth();
 
+    // Find all Monday-Friday weeks that contain at least one weekday of this month
     const firstDay = new Date(Date.UTC(y, m, 1));
-    const lastDay = new Date(Date.UTC(y, m + 1, 0));
-    const totalDays = lastDay.getUTCDate();
+    let curFirst = new Date(firstDay.getTime());
+    while (curFirst.getUTCDay() === 0 || curFirst.getUTCDay() === 6) {
+      curFirst.setUTCDate(curFirst.getUTCDate() + 1);
+    }
+    // Monday of the week containing the first weekday
+    const startMonday = new Date(curFirst.getTime());
+    const startDow = startMonday.getUTCDay(); // 1 = Mon
+    startMonday.setUTCDate(startMonday.getUTCDate() - (startDow - 1));
 
-    // Start from Sunday before the 1st
-    const startDayOfWeek = firstDay.getUTCDay(); // 0 = Sun
-    const gridStartDate = new Date(firstDay.getTime() - startDayOfWeek * 86400000);
+    // Last weekday of month
+    const lastDay = new Date(Date.UTC(y, m + 1, 0));
+    let curLast = new Date(lastDay.getTime());
+    while (curLast.getUTCDay() === 0 || curLast.getUTCDay() === 6) {
+      curLast.setUTCDate(curLast.getUTCDate() - 1);
+    }
+    // Monday of the week containing the last weekday
+    const endMonday = new Date(curLast.getTime());
+    const endDow = endMonday.getUTCDay();
+    endMonday.setUTCDate(endMonday.getUTCDate() - (endDow - 1));
+
+    const weekMondays = [];
+    let curMonday = new Date(startMonday.getTime());
+    while (curMonday.getTime() <= endMonday.getTime()) {
+      weekMondays.push(new Date(curMonday.getTime()));
+      curMonday.setUTCDate(curMonday.getUTCDate() + 7);
+    }
 
     const weekColHeader = state.isSupervisor ? 'Week / Approval' : 'Wk';
 
@@ -1312,24 +1333,19 @@
       <div class="month-calendar-card ${state.isSupervisor ? 'is-supervisor' : ''}">
         <div class="month-weekdays-grid">
           <div class="month-weekday-header month-week-col-header">${weekColHeader}</div>
-          <div class="month-weekday-header" style="color: #dc2626;">Sun</div>
           <div class="month-weekday-header">Mon</div>
           <div class="month-weekday-header">Tue</div>
           <div class="month-weekday-header">Wed</div>
           <div class="month-weekday-header">Thu</div>
           <div class="month-weekday-header">Fri</div>
-          <div class="month-weekday-header" style="color: #2563eb;">Sat</div>
         </div>
         <div class="month-days-grid">
     `;
 
-    // 5 or 6 weeks (35 or 42 cells)
-    const rowCount = (startDayOfWeek + totalDays) > 35 ? 42 : 35;
-    const numWeekRows = rowCount / 7;
-
-    for (let r = 0; r < numWeekRows; r++) {
-      // Calculate row week info using Thursday of this row (ISO-8601 standard)
-      const rowThursday = new Date(gridStartDate.getTime() + (r * 7 + 4) * 86400000);
+    for (let r = 0; r < weekMondays.length; r++) {
+      const rowMonday = weekMondays[r];
+      // Thursday of this row (ISO-8601 standard week anchor)
+      const rowThursday = new Date(rowMonday.getTime() + 3 * 86400000);
       const rowIso = getIsoWeekAndYear(formatDateIso(rowThursday));
       const isActiveWeek = rowIso.year === state.year && rowIso.week === state.weekNum;
 
@@ -1388,16 +1404,14 @@
 
       html += weekCellHtml;
 
-      // Days of this week (Sun to Sat)
-      for (let c = 0; c < 7; c++) {
-        const i = r * 7 + c;
-        const cellDate = new Date(gridStartDate.getTime() + i * 86400000);
+      // 5 Weekdays of this row: Monday to Friday
+      for (let c = 0; c < 5; c++) {
+        const cellDate = new Date(rowMonday.getTime() + c * 86400000);
         const cellDateStr = formatDateIso(cellDate);
         const isCurrentMonth = cellDate.getUTCMonth() === m;
         const isToday = cellDateStr === getTodayIso();
         const isSelected = cellDateStr === formatDateIso(state.selectedDate);
         const dayNum = cellDate.getUTCDate();
-        const dayOfWeek = cellDate.getUTCDay();
 
         let cellClass = 'month-day-cell';
         if (!isCurrentMonth) cellClass += ' other-month';
@@ -1407,50 +1421,47 @@
 
         let contentHtml = '';
         let monthApprovalNeededHtml = '';
-        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-          // Weekday shift summary
-          const dayData = getShiftForDate(cellDate);
-          if (dayData && dayData.shifts) {
-            let hasAnySchedule = false;
-            let hasUnapproved = false;
-            dayData.shifts.forEach(s => {
-              const details = computeShiftDetails(s);
-              const hasSchedule = s.dayoff || details.isActive;
-              if (hasSchedule) {
-                hasAnySchedule = true;
-                if (s.approval !== 'Approved') {
-                  hasUnapproved = true;
-                }
+
+        // Weekday shift summary
+        const dayData = getShiftForDate(cellDate);
+        if (dayData && dayData.shifts) {
+          let hasAnySchedule = false;
+          let hasUnapproved = false;
+          dayData.shifts.forEach(s => {
+            const details = computeShiftDetails(s);
+            const hasSchedule = s.dayoff || details.isActive;
+            if (hasSchedule) {
+              hasAnySchedule = true;
+              if (s.approval !== 'Approved') {
+                hasUnapproved = true;
               }
-            });
-
-            if (hasAnySchedule && hasUnapproved) {
-              monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist"><span class="month-approval-dot"></span>Needs Approval</span>';
             }
+          });
 
-            contentHtml = '<div class="month-shifts-list">';
-            dayData.shifts.forEach((s, idx) => {
-              const emp = state.employees[idx];
-              const details = computeShiftDetails(s);
-              const isOff = details.isOff;
-              const shiftBadgeClass = isOff ? 'month-shift-tag is-off' : 'month-shift-tag';
-              contentHtml += `
-                <div class="${shiftBadgeClass}">
-                  <span><strong>${emp.name}</strong></span>
-                  <span>${details.shortText}</span>
-                </div>
-              `;
-            });
-            contentHtml += '</div>';
+          if (hasAnySchedule && hasUnapproved) {
+            monthApprovalNeededHtml = '<span class="month-approval-needed" title="Pending approval shifts exist"><span class="month-approval-dot"></span>Needs Approval</span>';
           }
-        } else {
-          contentHtml = '<div class="month-weekend-label">Weekend</div>';
+
+          contentHtml = '<div class="month-shifts-list">';
+          dayData.shifts.forEach((s, idx) => {
+            const emp = state.employees[idx];
+            const details = computeShiftDetails(s);
+            const isOff = details.isOff;
+            const shiftBadgeClass = isOff ? 'month-shift-tag is-off' : 'month-shift-tag';
+            contentHtml += `
+              <div class="${shiftBadgeClass}">
+                <span><strong>${emp.name}</strong></span>
+                <span>${details.shortText}</span>
+              </div>
+            `;
+          });
+          contentHtml += '</div>';
         }
 
         html += `
           <div class="${cellClass}" data-date="${cellDateStr}">
             <div class="month-cell-header">
-              <span class="month-cell-date" style="${dayOfWeek === 0 ? 'color: #dc2626;' : dayOfWeek === 6 ? 'color: #2563eb;' : ''}">${dayNum}</span>
+              <span class="month-cell-date">${dayNum}</span>
               ${monthApprovalNeededHtml}
             </div>
             ${contentHtml}

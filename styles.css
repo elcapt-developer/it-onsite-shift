@@ -734,13 +734,13 @@ body {
 
 .month-weekdays-grid {
   display: grid;
-  grid-template-columns: 56px repeat(7, 1fr);
+  grid-template-columns: 56px repeat(5, 1fr);
   background: #f9fafb;
   border-bottom: 1px solid var(--border);
 }
 
 .month-calendar-card.is-supervisor .month-weekdays-grid {
-  grid-template-columns: 140px repeat(7, 1fr);
+  grid-template-columns: 140px repeat(5, 1fr);
 }
 
 .month-weekday-header {
@@ -763,11 +763,11 @@ body {
 
 .month-days-grid {
   display: grid;
-  grid-template-columns: 56px repeat(7, 1fr);
+  grid-template-columns: 56px repeat(5, 1fr);
 }
 
 .month-calendar-card.is-supervisor .month-days-grid {
-  grid-template-columns: 140px repeat(7, 1fr);
+  grid-template-columns: 140px repeat(5, 1fr);
 }
 
 .month-week-cell {
@@ -882,7 +882,7 @@ body {
   position: relative;
 }
 
-.month-days-grid > *:nth-child(8n) {
+.month-days-grid > *:nth-child(6n) {
   border-right: none;
 }
 
