@@ -292,63 +292,107 @@ body {
 }
 
 /* Navigator Bar */
+/* Navigator Bar */
 .navigator-bar {
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 16px;
-  margin-bottom: 10px;
-  display: flex;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
 }
 
 .nav-controls {
   display: flex;
   align-items: center;
   gap: 6px;
+  justify-self: start;
 }
 
 .nav-display-wrap {
   position: relative;
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+}
+
+.nav-right-spacer {
+  justify-self: end;
 }
 
 .period-trigger-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
+  justify-content: center;
+  gap: 12px;
+  min-width: 380px;
+  padding: 10px 32px;
   background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-main);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .period-trigger-btn:hover {
   background: #f8fafc;
-  border-color: var(--border-dark);
+  border-color: #2563eb;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.16);
+  transform: translateY(-1px);
 }
 
 .cal-icon {
-  font-size: 1rem;
+  font-size: 1.35rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-main);
-  letter-spacing: -0.01em;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
 }
 
 .trigger-arrow {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-left: 4px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.period-trigger-btn:hover .trigger-arrow {
+  color: #2563eb;
+}
+
+@media (max-width: 820px) {
+  .navigator-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .nav-controls {
+    justify-content: center;
+    order: 2;
+  }
+  .nav-display-wrap {
+    order: 1;
+    width: 100%;
+  }
+  .period-trigger-btn {
+    min-width: 100%;
+    width: 100%;
+  }
+  .nav-right-spacer {
+    display: none;
+  }
 }
 
 /* Mini Calendar Popover with Week Highlights */
