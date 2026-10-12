@@ -4,7 +4,24 @@
    ========================================================================== */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark light;
+  --bg-app: #1b1a19;
+  --border: #363432;
+  --border-dark: #45423f;
+  
+  --text-main: #f5f5f4;
+  --text-muted: #a8a29e;
+  --text-dim: #78716c;
+  
+  --slot-active: #44403c;
+  --slot-in: #0284c7;
+  --slot-out: #4f46e5;
+  
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
   --bg-app: #ffffff;
   --border: #e5e7eb;
   --border-dark: #d1d5db;
@@ -16,8 +33,6 @@
   --slot-active: #334155;
   --slot-in: #1e293b;
   --slot-out: #0f172a;
-  
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {

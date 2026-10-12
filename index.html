@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light dark">
+  <meta name="color-scheme" content="dark light">
   <title>IT Onsite Shift</title>
   <link rel="stylesheet" href="styles.css">
   <script>
     try {
       const saved = localStorage.getItem("it-onsite-theme");
-      const isDark = saved === "dark" || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      const theme = isDark ? "dark" : "light";
+      const theme = saved === "light" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", theme);
-      document.querySelector('meta[name="color-scheme"]').content = theme;
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      if (meta) meta.content = theme;
     } catch (e) {}
   </script>
 </head>
@@ -24,10 +24,10 @@
       <div class="brand-title">IT Onsite Shift</div>
 
       <div class="header-actions">
-        <!-- Theme Toggle Button -->
-        <button type="button" id="btnThemeToggle" class="btn btn-theme-toggle" title="Toggle Dark / Light Mode" aria-label="Toggle theme">
-          <span class="theme-icon">🌙</span>
-          <span class="theme-text">Dark</span>
+        <!-- Theme Toggle Button (defaults to Dark mode active, offering Switch to Light) -->
+        <button type="button" id="btnThemeToggle" class="btn btn-theme-toggle" title="Switch to Light Mode" aria-label="Switch to Light Mode">
+          <span class="theme-icon">☀️</span>
+          <span class="theme-text">Light</span>
         </button>
 
         <span id="cloudStatusBadge" class="cloud-badge" title="Connected to Vercel Upstash Cloud Database">

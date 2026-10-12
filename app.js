@@ -99,19 +99,21 @@
     updateSaveButtons();
   }
 
-  // --- Theme Management (Light / Dark Mode) ---
+  // --- Theme Management (Light / Dark Mode, default: dark) ---
   const THEME_STORAGE_KEY = 'it-onsite-theme';
 
   function getSystemTheme() {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   }
 
   function getResolvedTheme() {
     try {
       const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved === 'dark' || saved === 'light') return saved;
+      if (saved === 'light') return 'light';
+      if (saved === 'dark') return 'dark';
     } catch (e) {}
-    return getSystemTheme();
+    // Default theme is dark
+    return 'dark';
   }
 
   function updateThemeUI(theme) {
@@ -150,23 +152,10 @@
     if (meta) meta.content = resolved;
     updateThemeUI(resolved);
 
-    // React to OS dark/light mode preference changes
-    if (window.matchMedia) {
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        let saved = null;
-        try {
-          saved = localStorage.getItem(THEME_STORAGE_KEY);
-        } catch (err) {}
-        if (!saved) {
-          applyTheme(e.matches ? 'dark' : 'light', false);
-        }
-      });
-    }
-
     // React to storage changes from other tabs
     window.addEventListener('storage', (e) => {
       if (e.key === THEME_STORAGE_KEY) {
-        const newTheme = e.newValue === 'dark' || e.newValue === 'light' ? e.newValue : getSystemTheme();
+        const newTheme = e.newValue === 'light' ? 'light' : 'dark';
         applyTheme(newTheme, false);
       }
     });
