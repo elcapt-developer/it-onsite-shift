@@ -85,16 +85,91 @@
     toastContainer: document.getElementById('toastContainer'),
     unsavedChangesBar: document.getElementById('unsavedChangesBar'),
     btnBottomSave: document.getElementById('btnBottomSave'),
-    btnBottomDiscard: document.getElementById('btnBottomDiscard')
+    btnBottomDiscard: document.getElementById('btnBottomDiscard'),
+    btnThemeToggle: document.getElementById('btnThemeToggle')
   };
 
   // --- Initialization ---
   function init() {
+    initTheme();
     loadSchedules();
     syncDateState();
     setupEventListeners();
     render();
     updateSaveButtons();
+  }
+
+  // --- Theme Management (Light / Dark Mode) ---
+  const THEME_STORAGE_KEY = 'it-onsite-theme';
+
+  function getSystemTheme() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function getResolvedTheme() {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === 'dark' || saved === 'light') return saved;
+    } catch (e) {}
+    return getSystemTheme();
+  }
+
+  function updateThemeUI(theme) {
+    if (!elements.btnThemeToggle) return;
+    const isDark = theme === 'dark';
+    elements.btnThemeToggle.setAttribute('aria-label', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+    elements.btnThemeToggle.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    elements.btnThemeToggle.innerHTML = isDark
+      ? '<span class="theme-icon">☀️</span><span class="theme-text">Light</span>'
+      : '<span class="theme-icon">🌙</span><span class="theme-text">Dark</span>';
+  }
+
+  function applyTheme(theme, save = true) {
+    if (save) {
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+      } catch (e) {}
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+    const meta = document.querySelector('meta[name="color-scheme"]');
+    if (meta) meta.content = theme;
+    updateThemeUI(theme);
+  }
+
+  function toggleTheme() {
+    const current = getResolvedTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next, true);
+    showToast(`Switched to ${next === 'dark' ? 'Dark' : 'Light'} Mode`);
+  }
+
+  function initTheme() {
+    const resolved = getResolvedTheme();
+    document.documentElement.setAttribute('data-theme', resolved);
+    const meta = document.querySelector('meta[name="color-scheme"]');
+    if (meta) meta.content = resolved;
+    updateThemeUI(resolved);
+
+    // React to OS dark/light mode preference changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        let saved = null;
+        try {
+          saved = localStorage.getItem(THEME_STORAGE_KEY);
+        } catch (err) {}
+        if (!saved) {
+          applyTheme(e.matches ? 'dark' : 'light', false);
+        }
+      });
+    }
+
+    // React to storage changes from other tabs
+    window.addEventListener('storage', (e) => {
+      if (e.key === THEME_STORAGE_KEY) {
+        const newTheme = e.newValue === 'dark' || e.newValue === 'light' ? e.newValue : getSystemTheme();
+        applyTheme(newTheme, false);
+      }
+    });
   }
 
   // --- Date & ISO Week Calculation Helpers ---
@@ -1017,6 +1092,11 @@
 
   // --- Event Listeners ---
   function setupEventListeners() {
+    // Theme Toggle Button
+    if (elements.btnThemeToggle) {
+      elements.btnThemeToggle.addEventListener('click', toggleTheme);
+    }
+
     // Bulk Week Approval Header Button
     if (elements.btnApproveWeekHeader) {
       elements.btnApproveWeekHeader.addEventListener('click', handleApproveWeekRequest);

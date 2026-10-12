@@ -3,8 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title>IT Onsite Shift</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    try {
+      const saved = localStorage.getItem("it-onsite-theme");
+      const isDark = saved === "dark" || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const theme = isDark ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", theme);
+      document.querySelector('meta[name="color-scheme"]').content = theme;
+    } catch (e) {}
+  </script>
 </head>
 <body>
 
@@ -14,6 +24,12 @@
       <div class="brand-title">IT Onsite Shift</div>
 
       <div class="header-actions">
+        <!-- Theme Toggle Button -->
+        <button type="button" id="btnThemeToggle" class="btn btn-theme-toggle" title="Toggle Dark / Light Mode" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-text">Dark</span>
+        </button>
+
         <span id="cloudStatusBadge" class="cloud-badge" title="Connected to Vercel Upstash Cloud Database">
           <span class="cloud-dot"></span>
           <span id="cloudStatusText" class="cloud-text">Cloud Synced</span>
